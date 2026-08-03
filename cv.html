@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Yeong Wai Son — Curriculum Vitae</title>
+<meta name="description" content="Curriculum vitae of Yeong Wai Son — Finance Transformation & Analytics Leader, Kuala Lumpur. 15+ years across Shell and Air Products.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#16191E; --ink2:#33383F; --ink3:#6B7280; --rule:#D9D5CC; --rule2:#ECE8E0;
+  --verm:#C0392B; --paper:#FFFFFF;
+  --sans:"Inter","Segoe UI",-apple-system,Helvetica,Arial,sans-serif;
+  --serif:"Fraunces",Georgia,"Times New Roman",serif;
+  --fs:9.1pt;              /* master body size — nudge down if content ever spills */
+}
+html{-webkit-text-size-adjust:100%}
+body{background:#E8E4DC;font-family:var(--sans);color:var(--ink);line-height:1.45;
+  font-size:var(--fs);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+
+/* ---------- toolbar (screen only) ---------- */
+.bar{position:sticky;top:0;z-index:20;background:var(--ink);color:#EFEAE0;
+  padding:11px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:12.5px}
+.bar b{font-weight:600;letter-spacing:.02em}
+.bar .sp{margin-left:auto}
+.bar button,.bar a.btn{font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;
+  border:1px solid rgba(239,234,224,.32);background:none;color:#EFEAE0;padding:7px 15px;border-radius:2px;
+  transition:.2s;text-decoration:none;display:inline-block}
+.bar button:hover,.bar a.btn:hover{background:#EFEAE0;color:var(--ink);border-color:#EFEAE0}
+.bar button.primary{background:var(--verm);border-color:var(--verm);color:#fff}
+.bar button.primary:hover{background:#A32E22;border-color:#A32E22;color:#fff}
+.hint{font-size:11.5px;color:#9A968E}
+
+/* ---------- the sheet ---------- */
+.page{width:210mm;min-height:297mm;margin:22px auto;background:var(--paper);
+  padding:14mm 15mm 12mm;box-shadow:0 6px 34px rgba(22,25,30,.17);position:relative}
+.page + .page{margin-top:0}
+
+/* ---------- header ---------- */
+header{display:flex;gap:12mm;align-items:flex-start;padding-bottom:7pt;border-bottom:1.6pt solid var(--ink)}
+.hgrow{flex:1;min-width:0}
+h1{font-family:var(--serif);font-size:23pt;line-height:1;font-weight:600;letter-spacing:-.015em}
+.role{font-size:9.8pt;font-weight:600;color:var(--verm);letter-spacing:.055em;text-transform:uppercase;margin-top:6pt}
+.contact{margin-top:7pt;font-size:8.5pt;color:var(--ink2);line-height:1.65}
+.contact span{white-space:nowrap}
+.contact .sep{color:var(--rule);margin:0 6px}
+.contact a{border-bottom:.6pt solid var(--rule)}
+.contact a:hover{color:var(--verm);border-color:var(--verm)}
+.dl::after{content:""}
+.qr{flex:0 0 auto;text-align:center;width:23mm}
+.qr img{width:23mm;height:23mm;display:block}
+.qr figcaption{font-size:6.4pt;color:var(--ink3);margin-top:3pt;line-height:1.3;letter-spacing:.02em}
+
+/* ---------- sections ---------- */
+section{margin-top:9pt;break-inside:auto}
+h2{font-size:8.4pt;font-weight:700;letter-spacing:.075em;text-transform:uppercase;color:var(--ink);
+  padding-bottom:3pt;border-bottom:.7pt solid var(--rule);margin-bottom:6pt}
+.lede{font-size:9.1pt;line-height:1.55;color:var(--ink2);text-align:justify}
+
+/* impact band */
+.impact{display:flex;gap:0;margin-top:7pt;border:.7pt solid var(--rule2);background:#FBFAF8}
+.impact div{flex:1;padding:5.5pt 7pt;border-left:.7pt solid var(--rule2)}
+.impact div:first-child{border-left:0}
+.impact b{display:block;font-family:var(--serif);font-size:12.5pt;font-weight:600;line-height:1;letter-spacing:-.02em}
+.impact span{display:block;font-size:7.4pt;color:var(--ink3);margin-top:3.5pt;line-height:1.3}
+
+/* experience */
+.job{margin-bottom:7.5pt;break-inside:avoid}
+.job:last-child{margin-bottom:0}
+.jhead{display:flex;justify-content:space-between;align-items:baseline;gap:8pt}
+.jhead .jtitle{flex:1 1 auto;min-width:0}
+.jhead .jdate{flex:0 0 auto}
+.jtitle{font-size:9.7pt;font-weight:700;letter-spacing:-.005em}
+.jorg{font-weight:600;color:var(--verm)}
+.jdate{font-size:8pt;color:var(--ink3);font-weight:600;white-space:nowrap;letter-spacing:.02em}
+.jnote{font-size:8.1pt;color:var(--ink3);margin-top:1.5pt;font-style:italic}
+.job ul{list-style:none;margin-top:3.5pt}
+.jbody{margin-top:3.5pt;font-size:8.9pt;line-height:1.5;color:var(--ink2)}
+.job li{position:relative;padding-left:10pt;margin-bottom:2.4pt;font-size:8.9pt;line-height:1.44;color:var(--ink2)}
+.job li:before{content:"";position:absolute;left:0;top:5.6pt;width:4.5pt;height:.9pt;background:var(--verm)}
+.job li b{color:var(--ink);font-weight:600}
+
+/* selected work */
+.work{display:grid;grid-template-columns:1fr 1fr;gap:5pt 14pt}
+.witem{padding-left:10pt;position:relative;font-size:8.8pt;line-height:1.4;color:var(--ink2);break-inside:avoid}
+.witem:before{content:"";position:absolute;left:0;top:5.4pt;width:4.5pt;height:.9pt;background:var(--verm)}
+.witem b{display:block;color:var(--ink);font-weight:600;font-size:9.4pt}
+.worknote{margin-top:7pt;padding:6pt 9pt;background:#FBFAF8;border-left:1.8pt solid var(--verm);
+  font-size:8.8pt;color:var(--ink2);line-height:1.5}
+.worknote a{font-weight:600;color:var(--verm);border-bottom:.6pt solid var(--verm)}
+
+/* certifications */
+.certs{display:grid;grid-template-columns:1fr 1fr;gap:3.5pt 14pt}
+.cert{display:flex;justify-content:space-between;gap:8pt;align-items:baseline;padding-bottom:2pt;
+  border-bottom:.6pt dotted var(--rule);font-size:8.8pt;break-inside:avoid}
+.cert i{font-style:normal;color:var(--ink2)}
+.cert em{font-style:normal;font-size:7.6pt;color:var(--ink3);white-space:nowrap;letter-spacing:.02em}
+a.cert:hover i{color:var(--verm)}
+a.cert:hover em{color:var(--verm)}
+.verify{margin-top:6pt;font-size:8.4pt;color:var(--ink3);line-height:1.55}
+.verify b{color:var(--ink2);font-weight:600}
+
+/* skills + education */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14pt}
+.sk{margin-bottom:4pt;font-size:8.8pt;line-height:1.45}
+.sk b{color:var(--ink);font-weight:600}
+.sk span{color:var(--ink2)}
+.edu{font-size:8.9pt;line-height:1.45;margin-bottom:5pt}
+.edu b{font-weight:700}
+.edu span{color:var(--ink3);display:block;font-size:8.6pt}
+
+.foot{position:absolute;left:15mm;right:15mm;bottom:7mm;display:flex;justify-content:space-between;
+  font-size:7.4pt;color:var(--ink3);border-top:.6pt solid var(--rule2);padding-top:4pt;letter-spacing:.03em}
+
+/* ---------- print ---------- */
+@page{size:A4;margin:0}
+@media print{
+  body{background:#fff}
+  .bar{display:none!important}
+  .page{width:210mm;height:297mm;min-height:0;margin:0;padding:12mm 15mm 13mm;box-shadow:none;
+        break-after:page;page-break-after:always;overflow:visible}
+  .page:last-child{break-after:auto;page-break-after:auto}
+  .contact a,.cert{border-bottom-color:#D9D5CC}
+  .dl::after{content:" — " attr(data-url);color:#6B7280;font-size:7.6pt;letter-spacing:0}
+  a{color:inherit!important;text-decoration:none!important}
+}
+@media(max-width:820px){
+  .page{width:auto;min-height:0;margin:12px;padding:22px 20px}
+  header{flex-direction:column-reverse;gap:14px}
+  .qr{width:96px;align-self:flex-start}
+  .qr img{width:96px;height:96px}
+  .impact{flex-wrap:wrap}
+  .impact div{flex:1 1 45%;border-left:0;border-top:.7pt solid var(--rule2)}
+  .work,.certs,.two{grid-template-columns:1fr}
+  .foot{position:static;margin-top:20px}
+}
+</style>
+</head>
+<body>
+
+<div class="bar" role="toolbar" aria-label="Document actions">
+  <b>Yeong Wai Son — Curriculum Vitae</b>
+  <span class="hint">Two pages · A4 · every credential links to its source</span>
+  <span class="sp"></span>
+  <a class="btn" href="https://biventure2025.github.io/" target="_blank" rel="noopener">View the portfolio ↗</a>
+  <button class="primary" onclick="window.print()">Download / Print PDF</button>
+</div>
+
+<!-- ============================= PAGE 1 ============================= -->
+<article class="page">
+
+  <header>
+    <div class="hgrow">
+      <h1>Yeong Wai Son</h1>
+      <div class="role">Finance Transformation &amp; Analytics Leader</div>
+      <div class="contact">
+        <span>Kuala Lumpur, Malaysia</span><span class="sep">·</span>
+        <span>+60 12 369 2924</span><span class="sep">·</span>
+        <span><a href="mailto:waisonyeong@gmail.com">waisonyeong@gmail.com</a></span><br>
+        <span><a class="dl" data-url="linkedin.com/in/wai-son-yeong" href="https://www.linkedin.com/in/wai-son-yeong-46388685/" target="_blank" rel="noopener">LinkedIn profile</a></span><span class="sep">·</span>
+        <span><a class="dl" data-url="biventure2025.github.io" href="https://biventure2025.github.io/" target="_blank" rel="noopener">View my portfolio</a></span><span class="sep">·</span>
+        <span><a class="dl" data-url="learn.microsoft.com/users/yeongwaison" href="https://learn.microsoft.com/en-us/users/yeongwaison/transcript/dr5pyhex5ple9xy" target="_blank" rel="noopener">Microsoft Learn transcript</a></span>
+      </div>
+    </div>
+    <figure class="qr">
+      <img src="img/qr-portfolio.svg" alt="QR code linking to biventure2025.github.io">
+      <figcaption>View my works<br>12 live reports</figcaption>
+    </figure>
+  </header>
+
+  <section>
+    <h2>Profile</h2>
+    <p class="lede">Strategic finance transformation leader and Microsoft-certified solution architect with 15+ years driving global digital evolution within Fortune 50 energy businesses. Fifteen years running credit operations, then a deliberate move into building the systems that run them — bridging complex financial operations and modern data technology to automate workflows, optimise capital and build data-driven cultures that outlast the project. Proven record of delivering over 30,000 hours in annual efficiency savings and leading cross-functional teams through enterprise-wide upskilling.</p>
+
+    <div class="impact">
+      <div><b>30,000+</b><span>Hours of documented CI savings delivered</span></div>
+      <div><b>USD 5M</b><span>Monthly working capital improvement</span></div>
+      <div><b>50+</b><span>Analysts mentored into citizen developers</span></div>
+      <div><b>30</b><span>Largest team led, across three countries</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Professional Experience</h2>
+
+    <div class="job">
+      <div class="jhead">
+        <div class="jtitle">Independent BI &amp; Automation Consultant · <span class="jorg">Freelance</span></div>
+        <div class="jdate">Feb 2026 – Present</div>
+      </div>
+      <p class="jbody">Consulting independently on the same problems: Power BI and Fabric platforms, finance and credit analytics, AI agents built on Copilot Studio, and Power Platform automation — plus HRDC-claimable corporate training for Malaysian organisations building the capability in-house.</p>
+    </div>
+
+    <div class="job">
+      <div class="jhead">
+        <div class="jtitle">Digitalization Product Manager · <span class="jorg">Shell</span></div>
+        <div class="jdate">Dec 2022 – Jan 2026</div>
+      </div>
+      <ul>
+        <li><b>Digital roadmap &amp; strategy:</b> Orchestrated delivery of global data products, aligning technology with business objectives to optimise multi-billion-dollar portfolio resource allocation.</li>
+        <li><b>Renewables portfolio optimisation:</b> Unified 20+ disparate economic models into a single Power Platform decision tool, enabling real-time sensitivity analysis and data-driven investment decisions.</li>
+        <li><b>Global FP&amp;A transformation:</b> Engineered a Power BI reporting ecosystem with an upskilling programme attached, replacing manual processes with automated, high-speed insight generation.</li>
+        <li><b>ESG solution architecture:</b> Developed a Power Platform carbon scenario tool, automating emissions estimation and strengthening strategic sustainability planning.</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div class="jhead">
+        <div class="jtitle">Digital Operations Program Manager · <span class="jorg">Shell</span></div>
+        <div class="jdate">Jan 2020 – Nov 2022</div>
+      </div>
+      <div class="jnote">The pivot — stepped off the credit management ladder to build</div>
+      <ul>
+        <li><b>Process optimisation:</b> Championed the Global Data &amp; Digital programme for the Credit function, leveraging Azure SQL and Power Platform to eliminate manual bottlenecks and drive process efficiency.</li>
+        <li><b>Quantifiable impact:</b> Delivered over 30,000 hours of documented continuous-improvement savings through custom automation tools and advanced data engineering workflows.</li>
+        <li><b>Digital capability building:</b> Scaled a Citizen Developer programme, mentoring 50+ analysts in Alteryx and Power Platform and creating a self-sustaining automation culture that outlived the programme.</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div class="jhead">
+        <div class="jtitle">Senior Credit Manager · <span class="jorg">Shell</span></div>
+        <div class="jdate">Mar 2018 – Dec 2019</div>
+      </div>
+      <ul>
+        <li><b>Operational leadership:</b> Directed a team of 30 professionals across China, Hong Kong and Thailand, holding accountability for DSO and bad debt targets.</li>
+        <li><b>Strategic risk mitigation:</b> Blended financial analysis with data modelling to sharpen risk assessment frameworks, ensuring consistent delivery against aggressive credit performance targets.</li>
+      </ul>
+    </div>
+
+  </section>
+
+  <div class="foot"><span>Yeong Wai Son · Curriculum Vitae</span><span>Page 1 of 2</span></div>
+</article>
+
+<!-- ============================= PAGE 2 ============================= -->
+<article class="page">
+
+  <section style="margin-top:0">
+    <h2>Professional Experience <span style="font-weight:400;letter-spacing:.05em;text-transform:none">(continued)</span></h2>
+
+    <div class="job">
+      <div class="jhead">
+        <div class="jtitle">Credit Manager · <span class="jorg">Air Products</span></div>
+        <div class="jdate">Sep 2014 – Feb 2018</div>
+      </div>
+      <div class="jnote">Regional Asia remit — a portfolio of markets, each with its own credit culture and recovery route</div>
+      <ul>
+        <li><b>Working capital optimisation:</b> Designed and implemented a risk-based order blocking system, delivering a USD 5M monthly improvement in working capital.</li>
+        <li><b>Financial automation:</b> Built an automated global bad debt reserve solution, resolving a live control gap and removing 8 man-hours of manual reporting per month.</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div class="jhead">
+        <div class="jtitle">Credit Management · <span class="jorg">Shell Business Service Centre</span></div>
+        <div class="jdate">Jun 2009 – Aug 2014</div>
+      </div>
+      <div class="jnote">Progressive roles: Account Associate → Credit Analyst → Team Manager, China → Team Manager, Malaysia</div>
+      <ul>
+        <li><b>Team leadership:</b> Managed end-to-end credit operations — assessment, collections and receivables accounting — with four years leading teams, growing from the China book to the larger Malaysia portfolio.</li>
+        <li><b>Cash application automation:</b> Drove auto-matching of incoming customer payments against open receivables from effectively nil to roughly 60% within twelve months.</li>
+        <li><b>System migration:</b> Led the GSAP migration for China with minimal business disruption.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Selected Work — Live &amp; Verifiable</h2>
+    <div class="work">
+      <div class="witem"><b>AI Finance Agent — Variance Analysis</b>Copilot Studio agent producing the monthly variance pack end to end, with a mandatory human approval gate and a full audit log.</div>
+      <div class="witem"><b>Power BI Automation Engine</b>An AI agent built on Claude that turns a brief into a validated Power BI deliverable, and writes every failure back as a rule.</div>
+      <div class="witem"><b>IFRS 9 Credit Risk Analytics Suite</b>Seven-chapter platform covering the full expected-credit-loss chain — PD scoring, LGD, EAD, staging, concentration and stress testing.</div>
+      <div class="witem"><b>Power BI Dataviz World Champs, Barcelona 2026</b>Entries across Rounds 1–3, each featured on the Microsoft Fabric Community blog.</div>
+    </div>
+    <p class="worknote">Twelve live, fully interactive reports and agent walkthroughs — open them, click through the pages, use the slicers — on my portfolio — <a href="https://biventure2025.github.io/" target="_blank" rel="noopener">view my works</a>, or scan the QR code on page one.</p>
+  </section>
+
+  <section>
+    <h2>Certifications — Independently Verifiable</h2>
+    <div class="certs">
+      <a class="cert" href="https://learn.microsoft.com/api/credentials/share/en-us/YeongWaiSon/E59EBBE190D61C4B?sharingId=C9A8E00030F8C72D" target="_blank" rel="noopener"><i>Power Platform Solution Architect <b>Expert</b></i><em>Microsoft</em></a>
+      <a class="cert" href="https://learn.microsoft.com/api/credentials/share/en-us/YeongWaiSon/6B3FA3104F33A5A7?sharingId=C9A8E00030F8C72D" target="_blank" rel="noopener"><i>Fabric Analytics Engineer Associate</i><em>Microsoft</em></a>
+      <a class="cert" href="https://learn.microsoft.com/api/credentials/share/en-us/YeongWaiSon/4483E3147AD69868?sharingId=C9A8E00030F8C72D" target="_blank" rel="noopener"><i>Power BI Data Analyst Associate</i><em>Microsoft</em></a>
+      <a class="cert" href="https://learn.microsoft.com/api/credentials/share/en-us/YeongWaiSon/533FD1FDEBAE70DA?sharingId=C9A8E00030F8C72D" target="_blank" rel="noopener"><i>Azure AI Engineer Associate</i><em>Microsoft</em></a>
+      <a class="cert" href="https://learn.microsoft.com/api/credentials/share/en-us/YeongWaiSon/95FDFD8E3F8BAF5F?sharingId=C9A8E00030F8C72D" target="_blank" rel="noopener"><i>Power Platform Functional Consultant Associate</i><em>Microsoft</em></a>
+      <a class="cert" href="https://trainers.hrdcorp.gov.my/ecert/3642aa70-2aa0-11f1-9e1f-2915cdf5aecf/3ea09790-2aa0-11f1-a7a5-8d94a6f95f04" target="_blank" rel="noopener"><i>Certified Trainer</i><em>HRD Corp Malaysia</em></a>
+    </div>
+    <p class="verify"><b>Verify all Microsoft credentials:</b> learn.microsoft.com/users/yeongwaison &nbsp;·&nbsp; <b>Trainer certificate:</b> trainers.hrdcorp.gov.my</p>
+  </section>
+
+  <section>
+    <h2>Capabilities</h2>
+    <div class="two">
+      <div>
+        <p class="sk"><b>Data &amp; BI —</b> <span>Power BI, Microsoft Fabric, Advanced DAX, Data Modelling, Power Query, Azure SQL, Alteryx</span></p>
+        <p class="sk"><b>AI &amp; Low-code —</b> <span>Copilot Studio, AI Agent Design, Power Apps, Power Automate, Power Platform Architecture, Azure AI</span></p>
+      </div>
+      <div>
+        <p class="sk"><b>Finance —</b> <span>Credit Risk &amp; IFRS 9, FP&amp;A, Working Capital, Financial Analysis, Risk Management, SAP</span></p>
+        <p class="sk"><b>Leadership —</b> <span>Product Management, Program Management, Digital Transformation, Agile Delivery, Capability Building</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Education &amp; Languages</h2>
+    <div class="two">
+      <div>
+        <p class="edu"><b>Bachelor's Degree in Accounting with Finance</b><span>University of Abertay Dundee, United Kingdom · 2007</span></p>
+        <p class="edu"><b>Professional Certificate in Credit Management</b><span>FCIB · 2015</span></p>
+      </div>
+      <div>
+        <p class="edu"><b>Languages</b><span>English, Bahasa Malaysia, Mandarin and Cantonese — all professional working proficiency</span></p>
+        <p class="edu"><b>Availability</b><span>Open to contract / permanent roles and consulting engagements · Kuala Lumpur or remote</span></p>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot"><span>Yeong Wai Son · waisonyeong@gmail.com · biventure2025.github.io</span><span>Page 2 of 2</span></div>
+</article>
+
+</body>
+</html>

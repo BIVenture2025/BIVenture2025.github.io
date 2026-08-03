@@ -356,6 +356,7 @@ footer{background:var(--ink);color:#75736C;padding:36px 0;font-size:12.5px}
       <a href="#work">Work</a>
       <a href="#services">Services</a>
       <a href="#capabilities">Capabilities</a>
+      <a href="cv.html">CV</a>
       <a href="#contact" class="nav-cta">Get in touch</a>
     </div>
   </div>
@@ -373,7 +374,7 @@ footer{background:var(--ink);color:#75736C;padding:36px 0;font-size:12.5px}
           <p class="hero-sum" id="hSum"></p>
           <div class="hero-btns">
             <a href="#work" class="btn btn-p">See the work <span aria-hidden="true">→</span></a>
-            <a href="#contact" class="btn btn-s">Start a conversation</a>
+            <a href="cv.html" class="btn btn-s">Read the CV</a>
           </div>
           <div class="hero-meta" id="hMeta"></div>
         </div>
@@ -457,7 +458,7 @@ footer{background:var(--ink);color:#75736C;padding:36px 0;font-size:12.5px}
       <p class="ct-p">Whether that's a permanent role, a dashboard that needs building, a finance process that shouldn't still be manual, or a team that needs training — start with an email and tell me what's not working.</p>
       <div class="hero-btns">
         <a class="btn btn-p" id="ctMail">Email me</a>
-        <a class="btn btn-s" id="ctLi" target="_blank" rel="noopener">Connect on LinkedIn</a>
+        <a class="btn btn-s" href="cv.html">View / download CV</a>
       </div>
     </div>
     <div class="ct-list rv" id="ctList"></div>
@@ -504,7 +505,6 @@ $("#hCard").innerHTML = [
   ["Certifications", CV.certs.filter(c=>c.issuer==="Microsoft").length + " Microsoft · HRD Corp trainer"]
 ].map(r=>'<div class="hc-row"><span>'+esc(r[0])+'</span><span>'+esc(r[1])+'</span></div>').join("");
 $("#ctMail").href = "mailto:"+P.email+"?subject=" + encodeURIComponent("Enquiry from your portfolio site");
-const li = CV.links.find(l=>l.name==="LinkedIn"); if(li) $("#ctLi").href = li.url;
 $("#ftName").textContent = "© " + new Date().getFullYear() + " " + P.name;
 $("#ftLoc").textContent = P.location;
 

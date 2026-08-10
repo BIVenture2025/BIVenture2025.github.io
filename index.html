@@ -226,6 +226,16 @@ h1.name b{font-weight:600;display:block}
 .diagram{background:var(--ink);padding:34px 26px 26px}
 .diagram svg{width:100%;height:auto;display:block}
 .diagram figcaption{font-size:11.5px;color:#75736C;margin-top:16px;text-align:center;letter-spacing:.04em}
+/* clickable architecture placeholder */
+.arch{position:relative;display:block;background:var(--ink);text-decoration:none;color:inherit;
+  border-bottom:1px solid rgba(239,234,224,.09)}
+.arch .diagram{padding:30px 24px 22px}
+.arch .poster-no{top:14px;right:17px;left:auto}
+.arch-ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:rgba(22,25,30,.66);opacity:0;transition:.3s;color:var(--paper);font-size:13px;
+  font-weight:600;letter-spacing:.1em;text-transform:uppercase;z-index:3}
+.arch:hover .arch-ov,.arch:focus-visible .arch-ov{opacity:1}
+.arch:focus-visible{outline:2px solid var(--amber);outline-offset:-2px}
 
 /* ---------------- SERVICES ---------------- */
 .svc{background:var(--ink);color:var(--paper)}
@@ -329,6 +339,9 @@ footer{background:var(--ink);color:#75736C;padding:36px 0;font-size:12.5px}
   .sk-grid,.cert-grid{grid-template-columns:1fr}
   .card-m{grid-template-columns:1fr;gap:12px}
   .card-note{margin-left:0;text-align:left;max-width:none}
+  .arch .diagram{padding:20px 12px 16px}
+  .arch .diagram figcaption{margin-top:12px;font-size:11px}
+  .arch-ov{font-size:11.5px}
   .hero{min-height:auto;padding:104px 0 60px}
   .cue{display:none}
 }
@@ -338,7 +351,7 @@ footer{background:var(--ink);color:#75736C;padding:36px 0;font-size:12.5px}
   .step{opacity:1}
 }
 @media print{
-  nav,.cue,.embed,.poster-play,.filters{display:none!important}
+  nav,.cue,.embed,.poster-play,.arch-ov,.filters{display:none!important}
   body,.hero,.tl,.svc{background:#fff!important;color:#000!important}
   .step,.plate{opacity:1!important;visibility:visible!important}
 }
@@ -624,11 +637,96 @@ function engineSVG(){
   return s + '</svg>';
 }
 
+/* ---- Fabric platform architecture (project 03 placeholder) ---- */
+function fabricSVG(){
+  const D = CV.fabricDiagram;
+  if(!D) return "";
+  const W = 980, PAD = 34, IW = W - PAD*2, H = 812;
+  const CL = "#5C6E7C", CA = "#E5A94E", CT = "#DDD6C9", CS = "#8B8981", CM = "#75736C";
+  /* geometry per lane, positionally matched to D.lanes */
+  const G = [
+    { ly: 84, y: 98,  h:128, gap:28, ts:24,   ss:15.5, t1:38, s1:66, sl:22 },
+    { ly:272, y:286,  h:136, gap:34, ts:23,   ss:16.5, t1:36, s1:64, sl:22, iy:304, ih:100 },
+    { ly:468, y:482,  h:124, gap:20, ts:24,   ss:16.5, t1:42, s1:74, sl:24 },
+    { ly:652, y:666,  h:112, gap:20, ts:24,   ss:16.5, t1:38, s1:68, sl:24 }
+  ];
+  const F = 'font-family="Inter,sans-serif"';
+  let s = '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(D.title)+'">'+
+    '<defs>'+
+      '<marker id="fa" markerWidth="8" markerHeight="8" refX="7" refY="3.4" orient="auto">'+
+        '<path d="M0 0 L7 3.4 L0 6.8 z" fill="'+CL+'"/></marker>'+
+      '<marker id="faA" markerWidth="8" markerHeight="8" refX="7" refY="3.4" orient="auto">'+
+        '<path d="M0 0 L7 3.4 L0 6.8 z" fill="'+CA+'"/></marker>'+
+    '</defs>'+
+    '<text x="'+PAD+'" y="30" fill="'+CM+'" font-size="15" letter-spacing="2.2" font-weight="700" '+F+'>'+
+      esc(D.title)+'</text>';
+
+  const cx = [];
+  (D.lanes||[]).forEach((L,li)=>{
+    const g = G[li]; if(!g) return;
+    s += '<text x="'+PAD+'" y="'+g.ly+'" fill="'+CL+'" font-size="14" letter-spacing="2.4" '+
+         'font-weight="700" '+F+'>'+esc(L.label)+'</text>';
+    let by = g.y, bh = g.h, inset = 0;
+    if(L.container){
+      s += '<rect x="'+PAD+'" y="'+g.y+'" width="'+IW+'" height="'+g.h+'" rx="4" '+
+           'fill="rgba(92,110,124,.05)" stroke="'+CL+'" stroke-opacity=".3" stroke-dasharray="4 4"/>';
+      inset = 8; by = g.iy; bh = g.ih;
+    }
+    const n = L.boxes.length, avail = IW - inset*2, bw = (avail - g.gap*(n-1))/n, row = [];
+    L.boxes.forEach((b,i)=>{
+      const x = PAD + inset + i*(bw + g.gap), mid = x + bw/2;
+      row.push(mid);
+      const stroke = b.accent ? CA : (b.dashed ? CM : CL);
+      const fill   = b.accent ? "rgba(229,169,78,.08)" : (b.dashed ? "none" : "rgba(92,110,124,.1)");
+      s += '<rect x="'+x+'" y="'+by+'" width="'+bw+'" height="'+bh+'" rx="3" fill="'+fill+'" '+
+           'stroke="'+stroke+'" stroke-opacity="'+(b.dashed?".6":".55")+'"'+
+           (b.dashed?' stroke-dasharray="5 4"':'')+'/>'+
+           '<text x="'+mid+'" y="'+(by+g.t1)+'" text-anchor="middle" fill="'+(b.accent?CA:(b.dashed?CS:CT))+
+           '" font-size="'+g.ts+'" font-weight="600" '+F+'>'+esc(b.t)+'</text>';
+      (b.s||[]).forEach((ln,k)=>{
+        s += '<text x="'+mid+'" y="'+(by+g.s1+k*g.sl)+'" text-anchor="middle" fill="'+
+             (b.dashed?CM:CS)+'" font-size="'+g.ss+'" '+F+'>'+esc(ln)+'</text>';
+      });
+      if(b.arrow && i < n-1){
+        const x1 = x + bw + 5, x2 = x + bw + g.gap - 7;
+        s += '<line x1="'+x1+'" y1="'+(by+bh/2)+'" x2="'+x2+'" y2="'+(by+bh/2)+'" stroke="'+CL+
+             '" stroke-width="1.4" marker-end="url(#fa)" opacity=".75"/>';
+      }
+    });
+    cx.push(row);
+  });
+
+  /* vertical connectors between lanes */
+  const down = (x,y1,y2,dash)=> '<line x1="'+x+'" y1="'+y1+'" x2="'+x+'" y2="'+y2+'" stroke="'+CL+
+    '" stroke-width="1.4" marker-end="url(#fa)" opacity=".7"'+(dash?' stroke-dasharray="5 4"':'')+'/>';
+  if(cx[0] && cx[0][1] != null) s += down(cx[0][1], 230, 282, false);
+  if(cx[0] && cx[0][2] != null) s += down(cx[0][2], 230, 282, true);
+  /* Gold is what the serve layer binds to — branch out of Gold, not the whole lakehouse */
+  if(cx[1] && cx[2] && cx[2].length === 2){
+    const gold = cx[1][cx[1].length-1], a = cx[2][0], b = cx[2][1], my = 452;
+    s += '<path d="M'+gold+' 426 L'+gold+' '+my+' L'+a+' '+my+'" fill="none" stroke="'+CL+
+         '" stroke-width="1.4" opacity=".7"/>'+
+         down(a, my, 478, false) + down(b, my, 478, false);
+  }
+  s += '<line x1="'+(W/2)+'" y1="610" x2="'+(W/2)+'" y2="662" stroke="'+CA+
+       '" stroke-width="1.5" marker-end="url(#faA)" opacity=".85"/>';
+  return s + '</svg>';
+}
+
 /* ============ PROJECTS ============ */
 function posterInner(p){
   if(p.kind === "diagram"){
     return '<figure class="diagram">'+engineSVG()+
            '<figcaption>'+esc(CV.engineDiagram.caption)+'</figcaption></figure>';
+  }
+  if(p.kind === "architecture"){
+    return '<a class="arch" href="'+esc(p.guide)+'" target="_blank" rel="noopener" '+
+        'aria-label="Open the rebuild guide for '+esc(p.title)+' — opens in a new tab">'+
+        '<figure class="diagram">'+fabricSVG()+
+          '<figcaption>'+esc(CV.fabricDiagram.caption)+'</figcaption></figure>'+
+        '<span class="poster-no">'+esc(p.no)+'</span>'+
+        '<span class="arch-ov">Open the rebuild guide ↗</span>'+
+      '</a>';
   }
   const label = p.kind === "video" ? "▶ &nbsp;Watch the demo" : "▶ &nbsp;Load live report";
   const aria  = p.kind === "video" ? "Play the demo video for "+p.title : "Load the live report for "+p.title;
@@ -660,6 +758,9 @@ function cardHTML(p,i){
       '<div class="card-f">'+
         (openHref?'<a class="lnk" href="'+esc(openHref)+'" target="_blank" rel="noopener">'+openTxt+'</a>':'')+
         (p.community?'<a class="lnk" href="'+esc(p.community)+'" target="_blank" rel="noopener">Community feature ↗</a>':'')+
+        (p.guide?'<a class="lnk" href="'+esc(p.guide)+'" target="_blank" rel="noopener">'+
+            esc(p.guideTxt||"Rebuild guide ↗")+'</a>':'')+
+        (p.repo?'<a class="lnk" href="'+esc(p.repo)+'" target="_blank" rel="noopener">Source on GitHub ↗</a>':'')+
         '<span class="card-note">'+esc(p.note)+'</span>'+
       '</div>'+
     '</div></article>';

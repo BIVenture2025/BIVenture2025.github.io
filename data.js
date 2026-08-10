@@ -241,10 +241,32 @@ const CV = {
       note: "Architecture shown at concept level. Implementation detail withheld."
     },
     {
+      id: "fabric-o2c",
+      category: "Data Platform",
+      domain: "Supply Chain & Finance",
+      no: "03",
+      kind: "architecture",
+      title: "Order-to-Cash on Microsoft Fabric — End to End",
+      meta: "SAP S/4HANA → Lakehouse → Ontology",
+      featured: true,
+      desc: "A complete order-to-cash platform for a fictional global furniture manufacturer, built across seven Microsoft Fabric components rather than as a report on someone else's data. A synthetic SAP S/4HANA estate — genuine table and field names, MANDT client, DATS date strings, ALPHA leading-zero keys — is mirrored into OneLake, conformed through a medallion Lakehouse, and modelled as a Kimball star at order-line grain. On top sit a Direct Lake semantic model, an ontology bound live to Gold, and a five-page report tracing 16,175 order lines through 19,578 complete order → delivery → invoice → cash paths. The decision I would defend hardest is reporting on-time delivery twice: 61.3% against the date the customer asked for, 5.4% against the date the business confirmed internally. Both are correct, and publishing one alone would have hidden a modelling choice worth fifty percentage points. What did not get finished is published as plainly as what did — the Data Pipeline stops at one verified Copy activity, and Fabric Graph was abandoned once its edges failed to survive a reopen.",
+      use:  "Data and finance leaders evaluating Fabric for an SAP estate, and anyone who wants to see a lakehouse, semantic model and ontology working as one system instead of three separate demos.",
+      tags: ["Microsoft Fabric", "SAP S/4HANA", "OneLake", "Lakehouse", "Medallion Architecture", "Direct Lake", "Ontology", "PySpark", "Dataflow Gen2", "Semantic Modelling", "DAX", "Order to Cash"],
+      signals: [
+        { v: "7 components", k: "Six built complete, one left partial and named as such" },
+        { v: "16,175 lines", k: "Order-line grain preserved from SAP source to report" },
+        { v: "61.3% / 5.4%", k: "On-time against the requested date, then the confirmed one" }
+      ],
+      guide: "https://biventure2025.github.io/nordhaus-o2c-fabric/docs/guide.html",
+      guideTxt: "Rebuild guide ↗",
+      repo: "https://github.com/BIVenture2025/nordhaus-o2c-fabric",
+      note: "Synthetic data; Nordhaus Group is fictional. Published as a rebuildable reference — DDL, notebooks, all 24 measures and a nine-step walkthrough, with the known gaps documented rather than trimmed."
+    },
+    {
       id: "credit-risk",
       category: "Analytic Dashboard",
       domain: "Credit & Risk",
-      no: "03",
+      no: "04",
       kind: "powerbi",
       title: "IFRS 9 Credit Risk Analytics Suite",
       meta: "7 chapters",
@@ -265,7 +287,7 @@ const CV = {
       id: "biz-performance",
       category: "Analytic Dashboard",
       domain: "Business Performance",
-      no: "04",
+      no: "05",
       kind: "powerbi",
       title: "Integrated Energy — Executive Scorecard",
       meta: "7 chapters",
@@ -286,7 +308,7 @@ const CV = {
       id: "mass-balance",
       category: "Analytic Dashboard",
       domain: "Operations",
-      no: "05",
+      no: "06",
       kind: "powerbi",
       title: "Refinery Mass Balance Analytics",
       meta: "Single canvas",
@@ -306,7 +328,7 @@ const CV = {
       id: "wc-round3",
       category: "Analytic Dashboard",
       domain: "Data Storytelling",
-      no: "06",
+      no: "07",
       kind: "powerbi",
       title: "Budget Doesn't Buy Hits. It Buys Floors.",
       meta: "5 chapters",
@@ -329,7 +351,7 @@ const CV = {
       id: "wc-round1",
       category: "Analytic Dashboard",
       domain: "Business Performance",
-      no: "07",
+      no: "08",
       kind: "powerbi",
       title: "PitchSide Pro — Revenue Performance",
       meta: "5 chapters",
@@ -351,7 +373,7 @@ const CV = {
       id: "lending",
       category: "Analytic Dashboard",
       domain: "Credit & Risk",
-      no: "08",
+      no: "09",
       kind: "powerbi",
       title: "Lending Portfolio Snapshot",
       meta: "3 chapters",
@@ -371,7 +393,7 @@ const CV = {
       id: "capital-projects",
       category: "Analytic Dashboard",
       domain: "Operations",
-      no: "09",
+      no: "10",
       kind: "powerbi",
       title: "Capital Projects Portfolio Control Tower",
       meta: "3 chapters",
@@ -391,7 +413,7 @@ const CV = {
       id: "financial-statement",
       category: "Analytic Dashboard",
       domain: "Finance",
-      no: "10",
+      no: "11",
       kind: "powerbi",
       title: "Investment Metrics — Corporate Financial Health",
       meta: "3 chapters",
@@ -411,7 +433,7 @@ const CV = {
       id: "lego-life",
       category: "Analytic Dashboard",
       domain: "Data Storytelling",
-      no: "11",
+      no: "12",
       kind: "powerbi",
       title: "My Life, In LEGO Bricks",
       meta: "5 chapters",
@@ -433,7 +455,7 @@ const CV = {
       id: "lego-grey",
       category: "Analytic Dashboard",
       domain: "Data Storytelling",
-      no: "12",
+      no: "13",
       kind: "powerbi",
       title: "The Great Grey — LEGO's Colour Story",
       meta: "4 chapters",
@@ -464,6 +486,34 @@ const CV = {
       { id:"b", label:"Build",      sub:"Generate the model and\nreport from proven components" },
       { id:"v", label:"Validate",   sub:"Automated checks until\nthe deliverable is clean" },
       { id:"l", label:"Learn",      sub:"Every failure becomes a rule\nand returns to the knowledge base" }
+    ]
+  },
+
+  /* ---------- 4b. FABRIC PLATFORM ARCHITECTURE (project 03 placeholder) ---------- */
+  fabricDiagram: {
+    title:   "PLATFORM ARCHITECTURE · MICROSOFT FABRIC · ONE WORKSPACE",
+    caption: "Seven Fabric components, one workspace — click through for the nine-step rebuild guide",
+    lanes: [
+      { label: "SOURCE & INGEST", boxes: [
+        { t:"SQL Database", s:["SAP S/4HANA stand-in","~25 tables, real names","VBAK · VBAP · VBRK"], arrow:true },
+        { t:"Mirroring", s:["Continuous, into OneLake","Bronze landing","No pipeline required"] },
+        { t:"Dataflow Gen2", s:["Reference data that never","lived in SAP","FX rates · sales targets"] },
+        { t:"Data Pipeline", s:["Metadata-driven extract","Partial — one verified","Copy activity"], dashed:true }
+      ]},
+      { label: "TRANSFORM · LAKEHOUSE", container:true, boxes: [
+        { t:"Bronze", s:["Mirrored landing, as-is","SAP types untouched"], arrow:true },
+        { t:"Silver", s:["18 conformed tables","SCD2 dimensions"], arrow:true },
+        { t:"Gold", s:["13 star-schema tables","16,175 order lines"], accent:true }
+      ]},
+      { label: "SERVE", boxes: [
+        { t:"Direct Lake semantic model", s:["13 tables · 13 relationships · 24 DAX measures","Direct Lake on OneLake — no import, no refresh"] },
+        { t:"Ontology", s:["16 keyed entity types, bound live to Gold","Graph traversal abandoned; edge tables kept"] }
+      ]},
+      { label: "CONSUME", boxes: [
+        { t:"Power BI report · 5 pages, live connected", s:[
+          "19,578 complete order → delivery → invoice → cash paths",
+          "On-time delivery reported twice: 61.3% requested · 5.4% confirmed"], accent:true }
+      ]}
     ]
   },
 

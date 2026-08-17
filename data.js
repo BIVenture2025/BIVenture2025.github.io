@@ -263,10 +263,46 @@ const CV = {
       note: "Synthetic data; Nordhaus Group is fictional. Published as a rebuildable reference — DDL, notebooks, all 24 measures and a nine-step walkthrough, with the known gaps documented rather than trimmed."
     },
     {
+      id: "fabric-fpna-close",
+      diagram: "fpnaDiagram",
+      category: "Data Platform",
+      domain: "Group Finance & Consolidation",
+      no: "04",
+      kind: "architecture",
+      title: "Month-End Close & Consolidation on Microsoft Fabric",
+      meta: "SAP BW extracts → Lakehouse → Writeback",
+      featured: true,
+      desc: "Every month a group finance team receives spreadsheets from SAP BW, consolidates thirty legal entities by hand, types commentary into a second workbook and adjustments into a third, then emails the result. The obvious fix \u2014 change the source systems \u2014 was off the table: the ERP roadmap is frozen for two years. So this platform starts from the same Excel drops the team already receives, and nothing in SAP or BW was touched. Fabric ingests them under audit control, then walks a real ownership tree: adding thirty entities up gives group EBITDA of 5,410.3m, consolidating them properly gives 5,121.5m, and 320.1m of that belongs to minority shareholders. The 289m gap is the difference between a spreadsheet and a consolidation. What I would show first is a month that is not clean \u2014 the quality gate blocks the period, the close pipeline goes red instead of quietly reporting success, and an alert fires two seconds later. Commentary and adjustments are typed into the report itself and flow into the next consolidated number, with the warehouse holding the audit trail and nobody able to approve their own.",
+      use: "Group finance and consolidation teams whose ERP cannot be touched, and anyone who wants to see a close that controls itself \u2014 writeback, a quality gate and alerting \u2014 rather than a dashboard that only reports.",
+      tags: [
+        "Microsoft Fabric",
+        "SAP BW",
+        "Financial Consolidation",
+        "Month-End Close",
+        "User Data Functions",
+        "Translytical Task Flow",
+        "Direct Lake",
+        "Data Pipeline",
+        "Data Activator",
+        "Warehouse",
+        "Calculation Groups",
+        "DAX"
+      ],
+      signals: [
+        { v: "Zero source change", k: "SAP and BW frozen; Excel drops are the only integration surface" },
+        { v: "49 / 49", k: "Writeback tests green, including three refusals and self-approval" },
+        { v: "2 seconds", k: "From a blocked close going red to the alert firing" }
+      ],
+      guide: "https://biventure2025.github.io/globalenergy-fpna-fabric/docs/guide.html",
+      guideTxt: "Rebuild guide ↗",
+      repo: "https://github.com/BIVenture2025/globalenergy-fpna-fabric",
+      note: "Synthetic data; GlobalEnergy Group is fictional and no figure represents a real company. Published as a rebuildable reference \u2014 notebooks, SQL, the semantic model, the pipeline definition and a step-by-step walkthrough, with the failures left in."
+    },
+    {
       id: "credit-risk",
       category: "Analytic Dashboard",
       domain: "Credit & Risk",
-      no: "04",
+      no: "05",
       kind: "powerbi",
       title: "IFRS 9 Credit Risk Analytics Suite",
       meta: "7 chapters",
@@ -287,7 +323,7 @@ const CV = {
       id: "biz-performance",
       category: "Analytic Dashboard",
       domain: "Business Performance",
-      no: "05",
+      no: "06",
       kind: "powerbi",
       title: "Integrated Energy — Executive Scorecard",
       meta: "7 chapters",
@@ -308,7 +344,7 @@ const CV = {
       id: "mass-balance",
       category: "Analytic Dashboard",
       domain: "Operations",
-      no: "06",
+      no: "07",
       kind: "powerbi",
       title: "Refinery Mass Balance Analytics",
       meta: "Single canvas",
@@ -328,7 +364,7 @@ const CV = {
       id: "wc-round3",
       category: "Analytic Dashboard",
       domain: "Data Storytelling",
-      no: "07",
+      no: "08",
       kind: "powerbi",
       title: "Budget Doesn't Buy Hits. It Buys Floors.",
       meta: "5 chapters",
@@ -351,7 +387,7 @@ const CV = {
       id: "wc-round1",
       category: "Analytic Dashboard",
       domain: "Business Performance",
-      no: "08",
+      no: "09",
       kind: "powerbi",
       title: "PitchSide Pro — Revenue Performance",
       meta: "5 chapters",
@@ -373,7 +409,7 @@ const CV = {
       id: "lending",
       category: "Analytic Dashboard",
       domain: "Credit & Risk",
-      no: "09",
+      no: "10",
       kind: "powerbi",
       title: "Lending Portfolio Snapshot",
       meta: "3 chapters",
@@ -393,7 +429,7 @@ const CV = {
       id: "capital-projects",
       category: "Analytic Dashboard",
       domain: "Operations",
-      no: "10",
+      no: "11",
       kind: "powerbi",
       title: "Capital Projects Portfolio Control Tower",
       meta: "3 chapters",
@@ -413,7 +449,7 @@ const CV = {
       id: "financial-statement",
       category: "Analytic Dashboard",
       domain: "Finance",
-      no: "11",
+      no: "12",
       kind: "powerbi",
       title: "Investment Metrics — Corporate Financial Health",
       meta: "3 chapters",
@@ -433,7 +469,7 @@ const CV = {
       id: "lego-life",
       category: "Analytic Dashboard",
       domain: "Data Storytelling",
-      no: "12",
+      no: "13",
       kind: "powerbi",
       title: "My Life, In LEGO Bricks",
       meta: "5 chapters",
@@ -455,7 +491,7 @@ const CV = {
       id: "lego-grey",
       category: "Analytic Dashboard",
       domain: "Data Storytelling",
-      no: "13",
+      no: "14",
       kind: "powerbi",
       title: "The Great Grey — LEGO's Colour Story",
       meta: "4 chapters",
@@ -490,6 +526,70 @@ const CV = {
   },
 
   /* ---------- 4b. FABRIC PLATFORM ARCHITECTURE (project 03 placeholder) ---------- */
+  /* Project 24 — FP&A close & consolidation. A different shape from the O2C platform: no source
+     database to mirror (SAP and BW are frozen, so monthly Excel drops are the only surface), a
+     warehouse acting as a control plane underneath the whole run, two semantic models, and a
+     writeback loop that returns from the report to the warehouse and into the next consolidation. */
+  fpnaDiagram: {
+    title: "PLATFORM ARCHITECTURE \u00b7 MICROSOFT FABRIC \u00b7 ONE WORKSPACE",
+    caption: "Ten Fabric components, a control plane and a writeback loop \u2014 click through for the step-by-step rebuild guide",
+    height: 1010,
+    geom: [
+      { ly: 84,  y: 98,  h:122, gap:24, ts:22, ss:14.5, t1:36, s1:62, sl:20 },
+      { ly: 266, y: 280, h:132, gap:30, ts:23, ss:15.5, t1:36, s1:64, sl:21, iy:298, ih:96 },
+      { ly: 458, y: 472, h:118, gap:24, ts:22, ss:14.5, t1:36, s1:62, sl:20 },
+      { ly: 636, y: 650, h:124, gap:24, ts:22, ss:14.5, t1:36, s1:62, sl:20 },
+      { ly: 820, y: 834, h:110, gap:24, ts:22, ss:14.5, t1:34, s1:60, sl:20 }
+    ],
+    lanes: [
+      { label: "SOURCE \u00b7 NOTHING IN SAP OR BW CHANGED", boxes: [
+        { t: "SAP BW extracts", s: ["Monthly Excel drops", "8 feeds \u00b7 no connector, no API", "The only integration surface"], arrow: true },
+        { t: "Bronze ingest", s: ["Schema-on-read parser", "5 provenance columns per row", "Late \u00b7 restated \u00b7 drift detected"] },
+        { t: "Dataflow Gen2", s: ["The analyst top-side workbook,", "ingested low-code \u2014 the thing", "writeback later replaces"], dashed: true }
+      ]},
+      { label: "TRANSFORM \u00b7 LAKEHOUSE", container: true, boxes: [
+        { t: "Bronze", s: ["As arrived, untouched", "Provenance on every row"], arrow: true },
+        { t: "Silver", s: ["Typed \u00b7 translated \u00b7 FX", "8 DQ rules, results persisted"], arrow: true },
+        { t: "Gold", s: ["13 tables \u00b7 31 entities", "Consolidated and eliminated"], accent: true }
+      ]},
+      { label: "SERVE", boxes: [
+        { t: "Direct Lake model", s: ["46 measures \u00b7 3 calc groups", "RLS, tested as a 2nd identity"] },
+        { t: "Ontology", s: ["Business-semantic layer", "Bound live to Gold"] },
+        { t: "Close monitor model", s: ["A second semantic model,", "reading the control plane"] }
+      ]},
+      { label: "CONSUME \u00b7 AND WRITE BACK", boxes: [
+        { t: "Power BI report", s: ["9 pages, live connected", "Commentary and adjustments", "typed on the page itself"], accent: true },
+        { t: "User Data Functions", s: ["3 functions \u00b7 49/49 tests", "Closed period, threshold and", "self-approval all refused"] },
+        { t: "Activator + dashboard", s: ["5 rules across 2 surfaces", "Fires 2s after a close blocks"] }
+      ]},
+      { label: "CONTROL PLANE \u00b7 WAREHOUSE \u00b7 UNDER THE WHOLE RUN", boxes: [
+        { t: "Arrival control", s: ["Expected feeds vs arrived", "Late and drift flagged"] },
+        { t: "Close calendar", s: ["Period status \u2014 the row a", "blocked close writes to"] },
+        { t: "Writeback tables", s: ["Commentary \u00b7 adjustments", "Transactional audit trail"] }
+      ]}
+    ],
+    links: [
+      /* ingest into the lakehouse */
+      { f:[0,1], t:[1,0], y1:220, y2:294, mid:252 },
+      { f:[0,2], t:[1,0], y1:220, y2:294, mid:252, dash:true },
+      /* Gold is what the serve layer binds to */
+      { f:[1,2], t:[2,0], y1:394, y2:468, mid:432 },
+      { f:[1,2], t:[2,1], y1:394, y2:468, mid:432 },
+      /* serve into consume */
+      { f:[2,0], t:[3,0], y1:590, y2:646, mid:618, accent:true },
+      { f:[2,2], t:[3,2], y1:590, y2:646, mid:618 },
+      /* the report writes back, through the functions, into the warehouse */
+      { f:[3,1], t:[4,2], y1:774, y2:830, mid:802, accent:true },
+      /* control tables feed the DQ gate, up the left margin */
+      /* No label on this one: it would have to sit on top of the Bronze box, and the lane
+         heading already says the control plane runs under everything. */
+      { f:[4,0], fx:34, t:[1,1], tx:37, y1:889, y2:346, corridor:16, dash:true },
+      /* and the loop that matters: warehouse -> next consolidation, up the right margin */
+      { f:[4,2], fx:946, t:[1,2], tx:938, y1:889, y2:346, corridor:963, accent:true,
+        label:"adjustments flow into the next consolidation", lx:560, ly:962 }
+    ]
+  },
+
   fabricDiagram: {
     title:   "PLATFORM ARCHITECTURE · MICROSOFT FABRIC · ONE WORKSPACE",
     caption: "Seven Fabric components, one workspace — click through for the nine-step rebuild guide",

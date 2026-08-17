@@ -638,13 +638,14 @@ function engineSVG(){
 }
 
 /* ---- Fabric platform architecture (project 03 placeholder) ---- */
-function fabricSVG(){
-  const D = CV.fabricDiagram;
+function fabricSVG(D){
+  D = D || CV.fabricDiagram;
   if(!D) return "";
-  const W = 980, PAD = 34, IW = W - PAD*2, H = 812;
+  const W = 980, PAD = 34, IW = W - PAD*2, H = D.height || 812;
   const CL = "#5C6E7C", CA = "#E5A94E", CT = "#DDD6C9", CS = "#8B8981", CM = "#75736C";
-  /* geometry per lane, positionally matched to D.lanes */
-  const G = [
+  /* geometry per lane, positionally matched to D.lanes. A diagram may carry its own;
+     without one, Project 23's pixel-tuned defaults apply unchanged. */
+  const G = D.geom || [
     { ly: 84, y: 98,  h:128, gap:28, ts:24,   ss:15.5, t1:38, s1:66, sl:22 },
     { ly:272, y:286,  h:136, gap:34, ts:23,   ss:16.5, t1:36, s1:64, sl:22, iy:304, ih:100 },
     { ly:468, y:482,  h:124, gap:20, ts:24,   ss:16.5, t1:42, s1:74, sl:24 },
@@ -699,6 +700,40 @@ function fabricSVG(){
   /* vertical connectors between lanes */
   const down = (x,y1,y2,dash)=> '<line x1="'+x+'" y1="'+y1+'" x2="'+x+'" y2="'+y2+'" stroke="'+CL+
     '" stroke-width="1.4" marker-end="url(#fa)" opacity=".7"'+(dash?' stroke-dasharray="5 4"':'')+'/>';
+
+  if(D.links){
+    /* Declarative connectors. f/t are [lane,box] pairs resolved to the box centres computed
+       above; fx/tx override with an absolute x. Routing, in order of precedence:
+         corridor : x1,y1 -> corridor,y1 -> corridor,y2 -> x2,y2   (goes around the boxes)
+         mid      : x1,y1 -> x1,mid -> x2,mid -> x2,y2             (elbow between two lanes)
+         neither  : a straight line
+       y2 < y1 simply draws upward, which is how the writeback return path is expressed. */
+    D.links.forEach(k=>{
+      const x1 = k.fx != null ? k.fx : (cx[k.f[0]] && cx[k.f[0]][k.f[1]]);
+      const x2 = k.tx != null ? k.tx : (cx[k.t[0]] && cx[k.t[0]][k.t[1]]);
+      if(x1 == null || x2 == null) return;
+      const col = k.accent ? CA : CL, mk = k.accent ? "faA" : "fa";
+      const dash = k.dash ? ' stroke-dasharray="5 4"' : '';
+      const w = k.accent ? 1.7 : 1.4, op = k.accent ? ".9" : ".7";
+      let d;
+      if(k.corridor != null){
+        d = "M"+x1+" "+k.y1+" L"+k.corridor+" "+k.y1+" L"+k.corridor+" "+k.y2+" L"+x2+" "+k.y2;
+      } else if(k.mid != null && Math.abs(x1-x2) > 1){
+        d = "M"+x1+" "+k.y1+" L"+x1+" "+k.mid+" L"+x2+" "+k.mid+" L"+x2+" "+k.y2;
+      } else {
+        d = "M"+x1+" "+k.y1+" L"+x2+" "+k.y2;
+      }
+      s += '<path d="'+d+'" fill="none" stroke="'+col+'" stroke-width="'+w+
+           '" marker-end="url(#'+mk+')" opacity="'+op+'" stroke-linejoin="round"'+dash+'/>';
+      if(k.label){
+        s += '<text x="'+(k.lx != null ? k.lx : (x1+x2)/2)+'" y="'+(k.ly != null ? k.ly : k.y1-9)+
+             '" text-anchor="'+(k.la || "middle")+'" fill="'+col+'" font-size="13.5" '+
+             'font-weight="600" '+F+'>'+esc(k.label)+'</text>';
+      }
+    });
+    return s + '</svg>';
+  }
+
   if(cx[0] && cx[0][1] != null) s += down(cx[0][1], 230, 282, false);
   if(cx[0] && cx[0][2] != null) s += down(cx[0][2], 230, 282, true);
   /* Gold is what the serve layer binds to — branch out of Gold, not the whole lakehouse */
@@ -720,10 +755,11 @@ function posterInner(p){
            '<figcaption>'+esc(CV.engineDiagram.caption)+'</figcaption></figure>';
   }
   if(p.kind === "architecture"){
+    const D = CV[p.diagram || "fabricDiagram"] || CV.fabricDiagram;
     return '<a class="arch" href="'+esc(p.guide)+'" target="_blank" rel="noopener" '+
         'aria-label="Open the rebuild guide for '+esc(p.title)+' — opens in a new tab">'+
-        '<figure class="diagram">'+fabricSVG()+
-          '<figcaption>'+esc(CV.fabricDiagram.caption)+'</figcaption></figure>'+
+        '<figure class="diagram">'+fabricSVG(D)+
+          '<figcaption>'+esc(D.caption)+'</figcaption></figure>'+
         '<span class="poster-no">'+esc(p.no)+'</span>'+
         '<span class="arch-ov">Open the rebuild guide ↗</span>'+
       '</a>';

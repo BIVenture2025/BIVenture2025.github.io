@@ -299,10 +299,47 @@ const CV = {
       note: "Synthetic data; GlobalEnergy Group is fictional and no figure represents a real company. Published as a rebuildable reference \u2014 notebooks, SQL, the semantic model, the pipeline definition and a step-by-step walkthrough, with the failures left in."
     },
     {
+      id: "fabric-meridianpay-rti",
+      diagram: "meridianDiagram",
+      category: "Data Platform",
+      domain: "Payments & Fraud Risk",
+      no: "05",
+      kind: "architecture",
+      title: "Real-Time Payments Risk on Microsoft Fabric",
+      meta: "Eventhouse \u2192 reflexes \u2192 Direct Lake \u2192 self-grading",
+      featured: true,
+      desc: "A card acquirer runs 1,500 payment terminals across 600 merchants. Card testing is caught by a nightly batch the next morning; a compromised terminal by a chargeback six weeks later; a dead terminal when the merchant phones to ask why they took no money today. This platform puts all of it on one event stream \u2014 9.7 million events into a Fabric Eventhouse, where the transformation layer is KQL update policies and materialized views rather than Bronze/Silver/Gold notebooks. One Spark notebook in the entire build. Four reflexes fire on patterns instead of schedules, and the fourth decomposes every issuer against its own baseline rather than a fixed threshold, because 92% approval is healthy for one BIN and alarming for another. The semantic model reads the event store's own Delta files with no Gold layer beneath it. And then the part most demos skip: when the chargebacks arrive thirty to sixty days later, the platform grades every alert it raised and publishes its own precision \u2014 by cohort of how mature the evidence is, never as one blended number, with the unguarded measures bound to zero visuals and a lint rule proving it on every run. The failures are published too: two mandatory components were never built, and a precision of 1.000 is recorded as inadmissible because the alert set was constructed from the episode it was graded against.",
+      use: "Acquirers, PSPs and fraud teams who need detection in seconds rather than overnight \u2014 and anyone who wants to see a risk platform that measures how good its own alerts are instead of only raising them.",
+      tags: [
+        "Microsoft Fabric",
+        "Real-Time Intelligence",
+        "Eventhouse",
+        "KQL",
+        "Update Policies",
+        "Materialized Views",
+        "Data Activator",
+        "Real-Time Dashboard",
+        "Direct Lake",
+        "Anomaly Detection",
+        "Payments",
+        "Fraud Analytics",
+        "DAX"
+      ],
+      signals: [
+        { v: "0 notebooks", k: "In the transformation layer. Three KQL update policies and three materialized views do Silver and Gold \u2014 the one Spark notebook in the build only loads the backfill" },
+        { v: "60 of 60", k: "Terminal outages found, at a precision of 0.163 \u2014 published rather than tuned, and gated on a control that had to return 0 first" },
+        { v: "186 graded", k: "Every alert scored by how mature its evidence is. Precision by cohort, never one blended number" }
+      ],
+      guide: "https://biventure2025.github.io/meridianpay-rti-fabric/docs/guide.html",
+      guideTxt: "Rebuild guide \u2197",
+      repo: "https://github.com/BIVenture2025/meridianpay-rti-fabric",
+      note: "Synthetic data; Meridian Pay is fictional and no figure represents a real company, merchant or cardholder. Published as a rebuildable reference \u2014 the generator, 18 KQL scripts, the dashboard as source, the model, the report generator and a step-by-step walkthrough, with the failures left in."
+    },
+    {
       id: "credit-risk",
       category: "Analytic Dashboard",
       domain: "Credit & Risk",
-      no: "05",
+      no: "06",
       kind: "powerbi",
       title: "IFRS 9 Credit Risk Analytics Suite",
       meta: "7 chapters",
@@ -323,7 +360,7 @@ const CV = {
       id: "biz-performance",
       category: "Analytic Dashboard",
       domain: "Business Performance",
-      no: "06",
+      no: "07",
       kind: "powerbi",
       title: "Integrated Energy — Executive Scorecard",
       meta: "7 chapters",
@@ -344,7 +381,7 @@ const CV = {
       id: "mass-balance",
       category: "Analytic Dashboard",
       domain: "Operations",
-      no: "07",
+      no: "08",
       kind: "powerbi",
       title: "Refinery Mass Balance Analytics",
       meta: "Single canvas",
@@ -364,7 +401,7 @@ const CV = {
       id: "wc-round3",
       category: "Analytic Dashboard",
       domain: "Data Storytelling",
-      no: "08",
+      no: "09",
       kind: "powerbi",
       title: "Budget Doesn't Buy Hits. It Buys Floors.",
       meta: "5 chapters",
@@ -387,7 +424,7 @@ const CV = {
       id: "wc-round1",
       category: "Analytic Dashboard",
       domain: "Business Performance",
-      no: "09",
+      no: "10",
       kind: "powerbi",
       title: "PitchSide Pro — Revenue Performance",
       meta: "5 chapters",
@@ -409,7 +446,7 @@ const CV = {
       id: "lending",
       category: "Analytic Dashboard",
       domain: "Credit & Risk",
-      no: "10",
+      no: "11",
       kind: "powerbi",
       title: "Lending Portfolio Snapshot",
       meta: "3 chapters",
@@ -429,7 +466,7 @@ const CV = {
       id: "capital-projects",
       category: "Analytic Dashboard",
       domain: "Operations",
-      no: "11",
+      no: "12",
       kind: "powerbi",
       title: "Capital Projects Portfolio Control Tower",
       meta: "3 chapters",
@@ -449,7 +486,7 @@ const CV = {
       id: "financial-statement",
       category: "Analytic Dashboard",
       domain: "Finance",
-      no: "12",
+      no: "13",
       kind: "powerbi",
       title: "Investment Metrics — Corporate Financial Health",
       meta: "3 chapters",
@@ -469,7 +506,7 @@ const CV = {
       id: "lego-life",
       category: "Analytic Dashboard",
       domain: "Data Storytelling",
-      no: "13",
+      no: "14",
       kind: "powerbi",
       title: "My Life, In LEGO Bricks",
       meta: "5 chapters",
@@ -491,7 +528,7 @@ const CV = {
       id: "lego-grey",
       category: "Analytic Dashboard",
       domain: "Data Storytelling",
-      no: "14",
+      no: "15",
       kind: "powerbi",
       title: "The Great Grey — LEGO's Colour Story",
       meta: "4 chapters",
@@ -587,6 +624,53 @@ const CV = {
       /* and the loop that matters: warehouse -> next consolidation, up the right margin */
       { f:[4,2], fx:946, t:[1,2], tx:938, y1:889, y2:346, corridor:963, accent:true,
         label:"adjustments flow into the next consolidation", lx:560, ly:962 }
+    ]
+  },
+
+  meridianDiagram: {
+    title: "PLATFORM ARCHITECTURE \u00b7 MICROSOFT FABRIC REAL-TIME INTELLIGENCE \u00b7 ONE WORKSPACE",
+    caption: "9.7 million events, a transformation layer with no notebooks in it, and a grading loop that closes sixty days later \u2014 click through for the step-by-step rebuild guide",
+    height: 830,
+    geom: [
+      { ly: 84,  y: 98,  h:104, gap:26, ts:22, ss:14.5, t1:38, s1:64, sl:20 },
+      { ly: 262, y: 276, h:104, gap:26, ts:22, ss:14.5, t1:38, s1:64, sl:20 },
+      { ly: 440, y: 454, h:104, gap:26, ts:22, ss:14.5, t1:38, s1:64, sl:20 },
+      { ly: 618, y: 632, h:104, gap:26, ts:22, ss:14.5, t1:38, s1:64, sl:20 }
+    ],
+    lanes: [
+      { label: "SOURCE \u00b7 SEEDED AND BYTE-REPRODUCIBLE", boxes: [
+        { t: "Event generator", s: ["1,500 terminals \u00b7 927 stores", "137 planted episodes \u2014 the answer key"], arrow: true },
+        { t: "Backfill notebook", s: ["The one Spark notebook in the build", "9.7m events, each tied to a manifest row"] },
+        { t: "Live replay", s: ["Written for an Eventstream never built", "Recorded as a degradation"], dashed: true }
+      ]},
+      { label: "TRANSFORM \u00b7 EVENTHOUSE \u00b7 NO NOTEBOOKS IN THIS LAYER", boxes: [
+        { t: "Raw tables", s: ["As ingested, untouched", "29.2m rows \u00b7 5.3 GB \u2192 1.8 GB"], arrow: true },
+        { t: "Update policies", s: ["3 policies \u2014 this is Silver", "6 stream DQ rules, results persisted"], arrow: true },
+        { t: "Materialized views", s: ["3 views \u2014 this is Gold, with no Spark", "24 KQL functions alongside them"], accent: true }
+      ]},
+      { label: "DETECT \u00b7 ON PATTERNS, NOT ON A SCHEDULE", boxes: [
+        { t: "Four reflexes", s: ["Card testing \u00b7 terminal compromise", "Terminal dark \u00b7 issuer degradation"], arrow: true },
+        { t: "Activator", s: ["Fires end to end into Teams", "Evidence of a firing, not a config"], arrow: true },
+        { t: "alerts table", s: ["186 rows, every one of them graded", "Each firing carries its maturity cohort"], accent: true }
+      ]},
+      { label: "SERVE \u00b7 AND GRADE ITSELF", boxes: [
+        { t: "Direct Lake model", s: ["Reads the Eventhouse\u2019s own Delta mirror", "24 measures \u00b7 no Gold notebook beneath"], arrow: true },
+        { t: "Report and dashboard", s: ["5 Power BI pages \u00b7 3 real-time pages", "Both generated from files, never drawn"] },
+        { t: "Alert grading", s: ["Precision by maturity cohort", "Never blended, never unguarded"], accent: true }
+      ]}
+    ],
+    links: [
+      /* the backfill and the unbuilt replay both land in the raw tables */
+      { f:[0,1], t:[1,0], y1:202, y2:272, mid:230 },
+      { f:[0,2], t:[1,0], y1:202, y2:272, mid:246, dash:true },
+      /* Gold is what the detectors read, and what the mirror publishes */
+      { f:[1,2], t:[2,0], y1:380, y2:450, mid:415 },
+      { f:[1,1], t:[3,0], tx:40, y1:380, y2:684, corridor:18, dash:true },
+      /* every alert goes to be marked */
+      { f:[2,2], t:[3,2], y1:558, y2:628, mid:593, accent:true },
+      /* the loop that matters: the chargebacks come back and score the alerts */
+      { f:[3,2], fx:946, t:[2,2], tx:938, y1:706, y2:492, corridor:962, accent:true,
+        label:"disputes arrive 30\u201360 days later and grade every alert", lx:520, ly:790 }
     ]
   },
 

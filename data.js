@@ -545,6 +545,42 @@ const CV = {
       note: "Power BI Dataviz World Champs Barcelona 2026 — Round 2. Featured on the Microsoft Fabric Community blog.",
       community: "",
       url: "https://app.fabric.microsoft.com/view?r=eyJrIjoiOTE5ZWY1YTctOWIyOS00NTQ3LWIwZmItNTI1NDFhNjQ5Y2M2IiwidCI6IjQ5MDk0YTAyLTRjNzktNGEyYy1iZDdmLThlZTBmMjgzN2Y0MSJ9"
+    },
+    {
+      id: "fabric-velotrack-live-logistics",
+      diagram: "veloDiagram",
+      category: "Data Platform",
+      domain: "Logistics & Fleet Telemetry",
+      no: "16",
+      kind: "architecture",
+      title: "Live Logistics & Fleet Telemetry on Microsoft Fabric",
+      meta: "Eventstream → Materialized Lake Views → ML scoring → Ontology + Agent",
+      featured: true,
+      desc: "A parcel-logistics operator watches roughly 120 vehicles across 8 depots and 15 routes live, rather than the next morning. GPS pings and depot scan events stream through a Fabric Eventstream into OneLake; three Materialized Lake Views declare Silver and five declare Gold, so the platform's entire transformation layer is eight tables of dedupe, ordering and lineage logic — not Spark ETL. No hand-orchestrated notebook touches the shipment-status or route-performance tables. A scoring notebook grades every active shipment's late-delivery risk, cohorted by evidence maturity, on a strict train/score split so the injected truth used to build the story never leaks into the features that predict it. A Direct Lake model and a five-page report — four content pages plus an auto-generated guide — read the same Gold tables the ontology binds to, so when a Data Agent turned out to be unsupported on this tenant's trial SKU, an OperationsAgent substituted in the same session at zero build cost and now answers scripted ops questions from the model directly. The whole estate — Eventstream, Lakehouse, Variable Library, semantic model — deploys from a Git-integrated folder of item definitions in one workspace. The failures are published too: a live-replay leg of the pipeline posts cleanly and is never reflected in Bronze, an open defect rather than a hidden one, and the platform's own hypothesis about whether this deployment approach is actually faster than its predecessor could not be tested, because the channel it depends on was never reachable.",
+      use: "Ops and network planning teams who need to see the fleet live rather than in a next-morning batch — and anyone evaluating whether Fabric's newer declarative and agent components (Materialized Lake Views, Ontology, OperationsAgent) hold up against a build that tries to use all of them at once.",
+      tags: [
+        "Microsoft Fabric",
+        "Real-Time Intelligence",
+        "Eventstream",
+        "Materialized Lake Views",
+        "Direct Lake",
+        "Machine Learning",
+        "Ontology",
+        "OperationsAgent",
+        "Fleet Telemetry",
+        "Logistics Analytics",
+        "Git Integration",
+        "DAX"
+      ],
+      signals: [
+        { v: "8 MLVs", k: "Declarative Silver + Gold — the transformation layer holds no hand-orchestrated Spark ETL" },
+        { v: "9.60% late rate", k: "Cross-verified three independent ways — the scoring notebook, the semantic model, and the agent's own DAX" },
+        { v: "0 validator errors", k: "5-page report, 53 visuals, clean on first pass — both the engine linter and the official PBIR CLI" }
+      ],
+      guide: "https://biventure2025.github.io/velotrack-live-logistics-fabric/docs/guide.html",
+      guideTxt: "Rebuild guide ↗",
+      repo: "https://github.com/BIVenture2025/velotrack-live-logistics-fabric",
+      note: "Synthetic data; VeloTrack Logistics is fictional and no figure represents a real fleet, shipment or driver. Published as a rebuildable reference — the generator, the declarative MLV layer, the scoring notebook, the semantic model and a step-by-step walkthrough, with the failures left in."
     }
   ],
 
@@ -698,6 +734,47 @@ const CV = {
           "19,578 complete order → delivery → invoice → cash paths",
           "On-time delivery reported twice: 61.3% requested · 5.4% confirmed"], accent:true }
       ]}
+    ]
+  },
+
+  veloDiagram: {
+    title: "PLATFORM ARCHITECTURE · MICROSOFT FABRIC LIVE LOGISTICS · ONE WORKSPACE",
+    caption: "3.44 million GPS pings, a transformation layer built from eight declarative views instead of Spark, and an ops agent that answers from the same Gold tables the report reads — click through for the step-by-step rebuild guide",
+    height: 830,
+    geom: [
+      { ly: 84,  y: 98,  h:104, gap:26, ts:22, ss:14.5, t1:38, s1:64, sl:20 },
+      { ly: 262, y: 276, h:104, gap:26, ts:22, ss:14.5, t1:38, s1:64, sl:20 },
+      { ly: 440, y: 454, h:104, gap:26, ts:22, ss:14.5, t1:38, s1:64, sl:20 },
+      { ly: 618, y: 632, h:104, gap:26, ts:22, ss:14.5, t1:38, s1:64, sl:20 }
+    ],
+    lanes: [
+      { label: "SOURCE · SEEDED AND BYTE-REPRODUCIBLE", boxes: [
+        { t: "Event generator", s: ["~120 vehicles, 8 depots, 15 routes", "25,000 shipments, dirty data layer"], arrow: true },
+        { t: "Backfill notebook", s: ["One of two notebooks in the build", "3.44m pings, manifest-tied"] },
+        { t: "Live replay", s: ["Posts cleanly, monitor confirms", "Not in Bronze — logged, not hidden"], dashed: true }
+      ]},
+      { label: "TRANSFORM · MATERIALIZED LAKE VIEWS · NO SPARK IN THIS LAYER", boxes: [
+        { t: "Raw Bronze", s: ["From the Eventstream, untouched", "Duplicates and disorder intact"], arrow: true },
+        { t: "Silver MLVs", s: ["3 views — dedupe, ordering", "No notebook in the loop"], arrow: true },
+        { t: "Gold MLVs", s: ["5 views — shipment, route, depot", "8/8 live on first attempt"], accent: true }
+      ]},
+      { label: "SCORE · COHORTED, LEAKAGE-CONTROLLED", boxes: [
+        { t: "Scoring notebook", s: ["The other of two notebooks", "Split enforced before read"], arrow: true },
+        { t: "risk_scores", s: ["gold.shipment_risk_scores", "25,000 rows, 239 high-risk"], arrow: true },
+        { t: "Late rate — 9.60%", s: ["Verified three independent ways", "Notebook, model, agent's own DAX"], accent: true }
+      ]},
+      { label: "SERVE · AND ANSWER FOR ITSELF", boxes: [
+        { t: "Direct Lake model", s: ["4 tables · 29 measures · 0 errors", "Reads Gold directly, no refresh"], arrow: true },
+        { t: "Report + Ontology", s: ["5 pages, 53 visuals, verified", "Generated from files, never drawn"] },
+        { t: "OperationsAgent", s: ["Substitutes a killed Data Agent", "5 ops questions, DAX-verified"], accent: true }
+      ]}
+    ],
+    links: [
+      { f:[0,1], t:[1,0], y1:202, y2:272, mid:230 },
+      { f:[0,2], t:[1,0], y1:202, y2:272, mid:246, dash:true },
+      { f:[1,2], t:[2,0], y1:380, y2:450, mid:415 },
+      { f:[1,2], t:[3,0], tx:40, y1:380, y2:684, corridor:18, dash:true },
+      { f:[2,2], t:[3,2], y1:558, y2:628, mid:593, accent:true }
     ]
   },
 

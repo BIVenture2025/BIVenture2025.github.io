@@ -581,6 +581,43 @@ const CV = {
       guideTxt: "Rebuild guide ↗",
       repo: "https://github.com/BIVenture2025/velotrack-live-logistics-fabric",
       note: "Synthetic data; VeloTrack Logistics is fictional and no figure represents a real fleet, shipment or driver. Published as a rebuildable reference — the generator, the declarative MLV layer, the scoring notebook, the semantic model and a step-by-step walkthrough, with the failures left in."
+    },
+    {
+      id: "fabric-palmdesk-ctrm",
+      diagram: "palmDiagram",
+      category: "Data Platform",
+      domain: "Commodity Trading & Risk (CTRM)",
+      no: "17",
+      kind: "architecture",
+      title: "CTRM Post-Go-Live Analytics on Microsoft Fabric",
+      meta: "Warehouse \u2192 five T-SQL risk engines \u2192 Direct Lake \u2192 four-page report",
+      featured: true,
+      desc: "A palm oil trading desk closes its books every day, not every month \u2014 and by the next morning someone has to answer what the desk holds, what it is worth, why that changed, who is over their credit limit, and whether the hedges still work. Most desks answer out of a CTRM system\u2019s canned reports plus a spreadsheet, and the spreadsheet is where the answers actually live. This estate puts all five answers on one platform, recomputed from source every business day. Five T-SQL engines in a Fabric Warehouse price the forward curve to each contract\u2019s tenor, mark the book to market, decompose the day\u2019s P&L into six buckets \u2014 new trades, price, FX, time, amendments, and a residual that stays visible rather than absorbed \u2014 grade every counterparty against its limit, and run an IFRS 9 effectiveness test per designated hedge relationship. Nothing is derived in DAX: a Direct Lake model reads results the Warehouse computed, and a four-page report reads the model. Every figure on every page was checked against a number computed independently in T-SQL before the render was ever opened, because a report bound to a broken model and one bound to a working model are pixel-identical. That is not a hypothetical here \u2014 it is what the project spent most of two sessions learning, and both the finding and the failures are published with it.",
+      use: "Commodity trading desks and treasury teams that need a daily position, valuation and exposure picture their CTRM system does not give them \u2014 and anyone evaluating Direct Lake over a Fabric Warehouse, where the connector that works for a Lakehouse silently does not.",
+      tags: [
+        "Microsoft Fabric",
+        "Data Warehouse",
+        "T-SQL",
+        "Direct Lake",
+        "Commodity Trading",
+        "CTRM",
+        "Mark-to-Market",
+        "P&L Attribution",
+        "Credit Exposure",
+        "IFRS 9 Hedge Accounting",
+        "Calculation Groups",
+        "DAX"
+      ],
+      signals: [
+        { v: "39 / 39", k: "Control totals reconciled against a second, independent implementation of the same spec \u2014 then re-run and proven deterministic" },
+        { v: "Direct Lake on SQL", k: "A Warehouse binds through Sql.Database, not the OneLake connector \u2014 the wrong form validates, reads back intact, draws every table, and never binds one" },
+        { v: "82 measures", k: "12 tables, 108 columns, 13 relationships and 3 calculation groups \u2014 no import, no refresh" },
+        { v: "0 validator errors", k: "4 pages, every value read against a Warehouse figure computed first \u2014 including at the grand total, which caught a calculation item that was structurally perfect and meaningless" }
+      ],
+      guide: "https://biventure2025.github.io/palmdesk-ctrm-fabric/docs/guide.html",
+      guideTxt: "Rebuild guide \u2197",
+      repo: "https://github.com/BIVenture2025/palmdesk-ctrm-fabric",
+      note: "Synthetic data, fixed seed, 120 business days; Serantau Palm Trading Sdn. Bhd. is fictional and no figure represents a real trade, counterparty or price. Published as a rebuildable reference \u2014 the generator, the SQL engines, the semantic model, the report and a step-by-step walkthrough \u2014 with the gaps named: the open mirrored database is dropped and the Activator rules are documented, not live."
     }
   ],
 
@@ -775,6 +812,45 @@ const CV = {
       { f:[1,2], t:[2,0], y1:380, y2:450, mid:415 },
       { f:[1,2], t:[3,0], tx:40, y1:380, y2:684, corridor:18, dash:true },
       { f:[2,2], t:[3,2], y1:558, y2:628, mid:593, accent:true }
+    ]
+  },
+
+  palmDiagram: {
+    title: "PLATFORM ARCHITECTURE \u00b7 MICROSOFT FABRIC CTRM ANALYTICS \u00b7 ONE WORKSPACE",
+    caption: "120 business days of a palm oil trading book \u2014 priced, marked, attributed, graded against credit limits and hedge-tested by five T-SQL engines, then read through Direct Lake without a single import or refresh",
+    height: 830,
+    geom: [
+      { ly: 84,  y: 98,  h: 104, gap: 26, ts: 22, ss: 14.5, t1: 38, s1: 64, sl: 20 },
+      { ly: 262, y: 276, h: 104, gap: 26, ts: 22, ss: 14.5, t1: 38, s1: 64, sl: 20 },
+      { ly: 440, y: 454, h: 104, gap: 26, ts: 22, ss: 14.5, t1: 38, s1: 64, sl: 20 },
+      { ly: 618, y: 632, h: 104, gap: 26, ts: 22, ss: 14.5, t1: 38, s1: 64, sl: 20 }
+    ],
+    lanes: [
+      { label: "SOURCE \u00b7 SEEDED AND REPRODUCIBLE", boxes: [
+        { t: "CTRM generator", s: ["120 business days, fixed seed", "Contracts, futures, hedges, curves"], arrow: true },
+        { t: "SQL load batches", s: ["ref \u00b7 trd \u00b7 mkt \u00b7 ops", "Numbered \u2014 the keys need it"] },
+        { t: "Vendor market feed", s: ["Open mirroring, notebook written", "Landing zone empty \u2014 dropped"], dashed: true }
+      ]},
+      { label: "COMPUTE \u00b7 FIVE T-SQL ENGINES \u00b7 NOTHING DERIVED IN DAX", boxes: [
+        { t: "Curve pricing", s: ["Interpolated to each tenor", "One EXEC per business day"], arrow: true },
+        { t: "MTM + attribution", s: ["Six buckets to the day\u2019s \u0394MTM", "Unexplained residual stays VISIBLE"] },
+        { t: "Credit + IFRS 9", s: ["Exposure graded against limits", "Effectiveness per relationship"] }
+      ]},
+      { label: "PROVE \u00b7 TWICE, THEN REPLAY", boxes: [
+        { t: "39 control totals", s: ["Frozen after the 120-day run", "The comparator for later runs"], arrow: true },
+        { t: "Second build", s: ["Same spec, different code", "Reconciled 39 of 39"] },
+        { t: "Replay determinism", s: ["Numbers identical; frozen_at moved", "CTAS table: 120 of 120 days"] }
+      ]},
+      { label: "SERVE \u00b7 DIRECT LAKE ON SQL, NOT ON ONELAKE", boxes: [
+        { t: "Semantic model", s: ["12 tables, 82 measures, 3 calc groups", "Sql.Database, not OneLake"], arrow: true },
+        { t: "Four-page report", s: ["Position \u00b7 attribution \u00b7 credit \u00b7 hedge", "Read against T-SQL truth"] },
+        { t: "AltProof card", s: ["Alt-text bound as VISIBLE values", "Fails loudly when missing"], accent: true }
+      ]}
+    ],
+    links: [
+      { f: [0,1], t: [1,0], y1: 202, y2: 272, mid: 230 },
+      { f: [1,2], t: [2,0], y1: 380, y2: 450, mid: 415 },
+      { f: [2,2], t: [3,0], y1: 558, y2: 628, mid: 593 }
     ]
   },
 

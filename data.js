@@ -618,6 +618,39 @@ const CV = {
       guideTxt: "Rebuild guide \u2197",
       repo: "https://github.com/BIVenture2025/palmdesk-ctrm-fabric",
       note: "Synthetic data, fixed seed, 120 business days; Serantau Palm Trading Sdn. Bhd. is fictional and no figure represents a real trade, counterparty or price. Published as a rebuildable reference \u2014 the generator, the SQL engines, the semantic model, the report and a step-by-step walkthrough \u2014 with the gaps named: the open mirrored database is dropped and the Activator rules are documented, not live."
+    },
+    {
+      id: "halloween-fear-costume",
+      category: "Analytic Dashboard",
+      domain: "Data Storytelling",
+      no: "18",
+      kind: "powerbi",
+      title: "Fear Changes Costume",
+      meta: "1 page \u00b7 4 Deneb visuals",
+      award: "Halloween Contest 2026",
+      image: "img/fear-costume.jpg",
+      desc: "A Halloween survey asked 105 people for their fears as a child and their fears now. One portrait poster answers it: we outgrew the fears Halloween is made of \u2014 48 people afraid of the dark and the supernatural as children, 14 now \u2014 but not fear itself, which moved to loss, money and the future (28 \u2192 66). A graveyard of headstones, candles and new graves carries the argument, a slope chart shows only three fears staying in the top twelve, and the data community\u2019s own nightmare closes it. Four Deneb visuals, an intro that plays once and stops, and every label measured offline on canvas before Power BI ever drew it.",
+      use: "Single-page editorial storytelling \u2014 how far one portrait page can carry an argument, and how to make a custom-visual layout provably legible before it ships.",
+      tags: [
+        "Power BI",
+        "Deneb",
+        "Vega",
+        "Data Storytelling",
+        "Data Visualization",
+        "Custom Visuals",
+        "Accessibility",
+        "Editorial Design"
+      ],
+      signals: [
+        { v: "48 \u2192 14", k: "People afraid of the dark and the supernatural, as a child and now" },
+        { v: "961 labels", k: "Measured offline on canvas for size, clipping and overlap \u2014 0 issues" },
+        { v: "States its limits", k: "Self-reported, people not picks, groupings named on the page" }
+      ],
+      guide: "https://biventure2025.github.io/halloween-fear-pbi-deneb/docs/guide.html",
+      guideTxt: "Rebuild guide \u2197",
+      repo: "https://github.com/BIVenture2025/halloween-fear-pbi-deneb",
+      note: "Microsoft Fabric Community Halloween Data Visualization Contest 2026 \u2014 provided dataset only, 105 respondents, unmodified.",
+      url: "https://app.powerbi.com/view?r=eyJrIjoiZDBjMGFkNTEtOTQ4MC00Nzc2LWIwM2UtNzg5Yzk3NWVhNzJmIiwidCI6IjQ5MDk0YTAyLTRjNzktNGEyYy1iZDdmLThlZTBmMjgzN2Y0MSJ9"
     }
   ],
 

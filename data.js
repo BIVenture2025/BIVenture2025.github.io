@@ -651,6 +651,35 @@ const CV = {
       repo: "https://github.com/BIVenture2025/halloween-fear-pbi-deneb",
       note: "Microsoft Fabric Community Halloween Data Visualization Contest 2026 \u2014 provided dataset only, 105 respondents, unmodified.",
       url: "https://app.powerbi.com/view?r=eyJrIjoiZDBjMGFkNTEtOTQ4MC00Nzc2LWIwM2UtNzg5Yzk3NWVhNzJmIiwidCI6IjQ5MDk0YTAyLTRjNzktNGEyYy1iZDdmLThlZTBmMjgzN2Y0MSJ9"
+    },
+    {
+      id: "wc2027-goodnight-inn",
+      category: "Analytic Dashboard",
+      domain: "Investment Strategy",
+      no: "19",
+      kind: "powerbi",
+      title: "Goodnight Inn \u2014 Own the Guest",
+      meta: "2 pages \u00b7 hidden explainer",
+      award: "World Champs 2027 \u00b7 Round 1",
+      image: "img/goodnight-inn.jpg",
+      desc: "Pillow & Key gives each hotel brand a budget and a list of projects. Goodnight Inn fills more rooms than ever but keeps less of each sale, and agency commission took the largest share of the margin it lost since 2022. The plan, Own the guest, funds three projects \u2014 book direct, check in fast, price right \u2014 and holds most of the budget in reserve, because every other project loses value by 2032. Every rule-compliant set of projects was valued, each option is shown with its cost, value and payback, and each project left out says why it waits.",
+      use: "Capital allocation and investment cases where a board needs the recommendation, the alternatives, and the reason money is not spent.",
+      tags: [
+        "Power BI",
+        "Deneb",
+        "DAX",
+        "Investment Analysis",
+        "Scenario Analysis",
+        "Data Storytelling",
+        "Accessibility"
+      ],
+      signals: [
+        { v: "$9.4M of $60M", k: "Three projects funded, the rest held in reserve" },
+        { v: "456 plans", k: "Every set that meets the rules, valued to 2032" },
+        { v: "Dec 2030", k: "When the plan earns back its cost, expected case" }
+      ],
+      note: "Power BI Dataviz World Champs 2027 \u2014 Round 1, Pillow & Key Group investment challenge. Provided dataset only.",
+      url: "https://app.powerbi.com/view?r=eyJrIjoiODJhM2JhNzItOTJlZS00NGE2LTljY2UtNWIxZjk3YTZkZjVjIiwidCI6IjQ5MDk0YTAyLTRjNzktNGEyYy1iZDdmLThlZTBmMjgzN2Y0MSJ9"
     }
   ],
 

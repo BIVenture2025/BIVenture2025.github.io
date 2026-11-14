@@ -301,13 +301,13 @@ customer, booking, container, port call) and how they relate, bound to the Gold 
  
 <p class="plain">The last test of any estate: can it be rebuilt from the repository alone?</p>
 <p class="plain">In this build's test, a from-scratch deploy reached <b>8 of 10</b> item folders.
-The Eventstream and the Map failed because they point at the KQL database, and Git did not carry
-it at the time.</p>
-<div class="note"><b>Since then:</b> the KQL database definition, with its tables, functions and policies, has been captured into <code>platform/EH_StraitsLine.KQLDatabase/</code>. The full redeploy was <b>not</b> re-run with it, so treat step 3 as the reliable route and this folder as the one to try.</div>
+The Eventstream and the Map failed because they point at the KQL database, and the deploy never
+created it.</p>
+<details class="trap"><summary>Fabric Git keeps the KQL database inside the Eventhouse folder, in a hidden <code>.children</code> folder</summary><div class="body">The workspace's Git folder carried the database from the start, at <code>EH_StraitsLine.Eventhouse/.children/EH_StraitsLine.KQLDatabase/</code>, with its own logical id and a <code>DatabaseSchema.kql</code> holding the tables, functions and policies. A plain directory listing hides a dot-folder, which is how this build first recorded it as missing. Why the deploy skipped it was not established.</div></details><div class="note"><b>In this repository</b> the database definition is at <code>platform/EH_StraitsLine.KQLDatabase/</code>. The full redeploy was <b>not</b> re-run, so treat step 3 as the reliable route.</div>
 </div></section>
 
 <section id="traps"><h2>Every trap, in one table</h2>
-<table><thead><tr><th>Trap</th><th>What happens</th></tr></thead><tbody><tr><td><b>Join in an update policy, streaming ingestion on</b></td><td>Bare BadRequest. Turn streaming ingestion off on the source table.</td></tr><tr><td><b>Notebook parameters as a top-level list</b></td><td>Accepted and ignored. Use executionData.parameters.</td></tr><tr><td><b>%pip install after the parameters cell</b></td><td>Restarts Python and loses them. Install first and pass _inlineInstallationEnabled.</td></tr><tr><td><b>Big notebook definition in one payload</b></td><td>Refused as corrupted. Ship logic as a OneLake file and keep the notebook thin.</td></tr><tr><td><b>Map itemType casing</b></td><td>Read-back echoes what you sent. Only the render proves the binding.</td></tr><tr><td><b>DISTINCT, row_number() or AVG in an MLV</b></td><td>Silent fall back to full refresh. GROUP BY with MIN/COUNT.</td></tr><tr><td><b>Expected value copied at display precision</b></td><td>A correct build fails. Paste query output.</td></tr><tr><td><b>Title or subtitle with a selector</b></td><td>Ignored by Desktop, accepted by the validator.</td></tr><tr><td><b>Card display units, short bar charts, table totals</b></td><td>Only visible in a screenshot.</td></tr><tr><td><b>Ontology deployed and read back</b></td><td>Proves the definition, not the graph. Test for a returned row.</td></tr><tr><td><b>Uncaptured portal reading</b></td><td>Did not reproduce. Capture any reading that decides a step.</td></tr></tbody></table>
+<table><thead><tr><th>Trap</th><th>What happens</th></tr></thead><tbody><tr><td><b>Join in an update policy, streaming ingestion on</b></td><td>Bare BadRequest. Turn streaming ingestion off on the source table.</td></tr><tr><td><b>Notebook parameters as a top-level list</b></td><td>Accepted and ignored. Use executionData.parameters.</td></tr><tr><td><b>%pip install after the parameters cell</b></td><td>Restarts Python and loses them. Install first and pass _inlineInstallationEnabled.</td></tr><tr><td><b>Big notebook definition in one payload</b></td><td>Refused as corrupted. Ship logic as a OneLake file and keep the notebook thin.</td></tr><tr><td><b>Map itemType casing</b></td><td>Read-back echoes what you sent. Only the render proves the binding.</td></tr><tr><td><b>DISTINCT, row_number() or AVG in an MLV</b></td><td>Silent fall back to full refresh. GROUP BY with MIN/COUNT.</td></tr><tr><td><b>Expected value copied at display precision</b></td><td>A correct build fails. Paste query output.</td></tr><tr><td><b>Title or subtitle with a selector</b></td><td>Ignored by Desktop, accepted by the validator.</td></tr><tr><td><b>Card display units, short bar charts, table totals</b></td><td>Only visible in a screenshot.</td></tr><tr><td><b>Ontology deployed and read back</b></td><td>Proves the definition, not the graph. Test for a returned row.</td></tr><tr><td><b>Uncaptured portal reading</b></td><td>Did not reproduce. Capture any reading that decides a step.</td></tr><tr><td><b>KQL database in Git</b></td><td>Lives under the Eventhouse in a hidden .children folder. List with dot-folders shown.</td></tr></tbody></table>
 </section>
 
 <section id="not"><h2>What this build does not do</h2>
@@ -321,8 +321,7 @@ on it. All five are answered in SQL and cross-checked.</li>
 <li><b>Congestion shows; a simple ranking does not identify it.</b> The injected congestion is
 visible in the mean and the tail, but ranking ports by one statistic picks the wrong one
 (docs/MODEL_SPEC.md, section 7).</li>
-<li><b>The from-scratch deploy</b> reached 8 of 10 item folders and was not re-run after the KQL
-database schema was added.</li>
+<li><b>The from-scratch deploy</b> reached 8 of 10 item folders, and was not re-run.</li>
 <li><b>No row-level security, no CI/CD pipeline.</b> Out of scope.</li>
 </ul>
 </section>

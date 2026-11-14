@@ -620,10 +620,47 @@ const CV = {
       note: "Synthetic data, fixed seed, 120 business days; Serantau Palm Trading Sdn. Bhd. is fictional and no figure represents a real trade, counterparty or price. Published as a rebuildable reference \u2014 the generator, the SQL engines, the semantic model, the report and a step-by-step walkthrough \u2014 with the gaps named: the open mirrored database is dropped and the Activator rules are documented, not live."
     },
     {
+      id: "fabric-straitsline-ocean-freight",
+      diagram: "straitsDiagram",
+      category: "Data Platform",
+      domain: "Ocean Freight & Port Operations",
+      no: "18",
+      kind: "architecture",
+      title: "Ocean Freight Operations on Microsoft Fabric",
+      meta: "Eventstream \u2192 KQL geofence \u2192 Fabric Map \u2192 Materialized Lake Views \u2192 Direct Lake",
+      featured: true,
+      desc: "A container feeder line working the Straits of Malacca needs a few answers every day: where the ships are, which port is slow, which boxes have stayed past their free days, and whether each voyage pays for itself. In this estate the port calls come from the ships themselves. Simulated AIS positions stream through a Fabric Eventstream into an Eventhouse, and a KQL geofence turns each entry into and exit from a port polygon into an arrival or a departure, with no one keying in a time. A Fabric Map draws the fleet, the port polygons and the routes as three live layers over the same tables the geofence reads, so the picture cannot disagree with the port calls. Eight Materialized Lake Views build Silver and Gold, including demurrage against a tariff held in the Variable Library and a voyage contribution margin, and a Direct Lake model and a four-page report read Gold in place. Every headline figure was checked against a value computed somewhere else before anyone looked at a chart. The gaps are published with it: the ontology bound over Gold but its graph never materialized, so the five multi-hop questions are answered in SQL instead, and the margin is a contribution margin, because there is no bunker or port-cost data to make it a P&L.",
+      use: "Liner and feeder operators, port and terminal teams, and anyone who wants arrivals derived from vessel positions rather than keyed in \u2014 and anyone evaluating Fabric\u2019s real-time pieces (Eventstream, Eventhouse, Fabric Maps, Materialized Lake Views) together in one build.",
+      tags: [
+        "Microsoft Fabric",
+        "Real-Time Intelligence",
+        "Eventstream",
+        "Eventhouse",
+        "KQL",
+        "Fabric Maps",
+        "Materialized Lake Views",
+        "Direct Lake",
+        "Ocean Freight",
+        "Demurrage",
+        "Git Integration",
+        "DAX"
+      ],
+      signals: [
+        { v: "300 / 300", k: "Port calls derived from ship positions by a KQL geofence matched the generator\u2019s ground truth \u2014 offline first, then on the tenant" },
+        { v: "43 / 43", k: "Data checks pass across eight Materialized Lake Views, Silver to Gold, with the lineage visible in Fabric" },
+        { v: "9 / 9", k: "Model figures tied to frozen control totals match exactly \u2014 25 measures read Gold through Direct Lake" },
+        { v: "3 live layers", k: "Fabric Map: vessels, port polygons and routes over the same Eventhouse tables the geofence reads" }
+      ],
+      guide: "https://biventure2025.github.io/straitsline-ocean-freight-fabric/docs/guide.html",
+      guideTxt: "Rebuild guide \u2197",
+      repo: "https://github.com/BIVenture2025/straitsline-ocean-freight-fabric",
+      note: "Synthetic data, fixed seed, 60 days; StraitsLine is fictional and no figure represents a real vessel, voyage or customer. The ten port positions are real approximate coordinates. Published as a rebuildable reference \u2014 the generator, the KQL, the map, the views, the model, the report and a step-by-step walkthrough \u2014 with the gaps named: no graph queries, and contribution margin rather than P&L."
+    },
+    {
       id: "halloween-fear-costume",
       category: "Analytic Dashboard",
       domain: "Data Storytelling",
-      no: "18",
+      no: "19",
       kind: "powerbi",
       title: "Fear Changes Costume",
       meta: "1 page \u00b7 4 Deneb visuals",
@@ -656,7 +693,7 @@ const CV = {
       id: "wc2027-goodnight-inn",
       category: "Analytic Dashboard",
       domain: "Investment Strategy",
-      no: "19",
+      no: "20",
       kind: "powerbi",
       title: "Goodnight Inn \u2014 Own the Guest",
       meta: "2 pages \u00b7 hidden explainer",
@@ -913,6 +950,45 @@ const CV = {
       { f: [0,1], t: [1,0], y1: 202, y2: 272, mid: 230 },
       { f: [1,2], t: [2,0], y1: 380, y2: 450, mid: 415 },
       { f: [2,2], t: [3,0], y1: 558, y2: 628, mid: 593 }
+    ]
+  },
+
+  straitsDiagram: {
+    title: "PLATFORM ARCHITECTURE \u00b7 MICROSOFT FABRIC OCEAN FREIGHT \u00b7 ONE WORKSPACE",
+    caption: "Twelve ships, ten ports and sixty days of AIS positions \u2014 turned into port calls by a KQL geofence, drawn live on a Fabric Map, and priced into demurrage and voyage margin by eight Materialized Lake Views",
+    height: 830,
+    geom: [
+      { ly: 84,  y: 98,  h: 104, gap: 26, ts: 22, ss: 14.5, t1: 38, s1: 64, sl: 20 },
+      { ly: 262, y: 276, h: 104, gap: 26, ts: 22, ss: 14.5, t1: 38, s1: 64, sl: 20 },
+      { ly: 440, y: 454, h: 104, gap: 26, ts: 22, ss: 14.5, t1: 38, s1: 64, sl: 20 },
+      { ly: 618, y: 632, h: 104, gap: 26, ts: 22, ss: 14.5, t1: 38, s1: 64, sl: 20 }
+    ],
+    lanes: [
+      { label: "SOURCE \u00b7 SEEDED AND REPRODUCIBLE", boxes: [
+        { t: "Data generator", s: ["12 vessels, 10 ports, 60 voyages", "146,205 rows, totals frozen"] },
+        { t: "Variable Library", s: ["Tariff, free days, fleet size", "No number hard-coded"] },
+        { t: "Replay notebook", s: ["131,544 AIS pings sent", "All of them ingested"] }
+      ]},
+      { label: "HOT PATH \u00b7 LIVE PINGS", boxes: [
+        { t: "Eventhouse", s: ["Pings land via Eventstream", "129,600 after dedupe"], arrow: true },
+        { t: "KQL geofence", s: ["Positions into port calls", "300 of 300 matched"], arrow: true },
+        { t: "Fabric Map", s: ["Vessels, ports and routes", "Three live KQL layers"], accent: true }
+      ]},
+      { label: "TRANSFORM \u00b7 MATERIALIZED LAKE VIEWS", boxes: [
+        { t: "Silver \u00b7 4 views", s: ["Pings, port events, calls, boxes", "Dedupe by GROUP BY"], arrow: true },
+        { t: "Gold \u00b7 4 views", s: ["Ports, demurrage, margin, customers", "43 of 43 checks pass"], accent: true }
+      ]},
+      { label: "SERVE \u00b7 DIRECT LAKE", boxes: [
+        { t: "Semantic model", s: ["7 tables + date, 25 measures", "9 of 9 tied figures exact"], arrow: true },
+        { t: "Four-page report", s: ["45 visuals, generated from code", "Every figure checked first"] },
+        { t: "Ontology", s: ["Bound over Gold, read back", "Graph never materialized"], dashed: true }
+      ]}
+    ],
+    links: [
+      { f: [0,2], t: [1,0], tx: 290, y1: 202, y2: 272, mid: 237 },
+      { f: [0,0], t: [2,0], tx: 40, y1: 202, y2: 506, corridor: 18 },
+      { f: [2,1], t: [3,0], tx: 290, y1: 558, y2: 628, mid: 593 },
+      { f: [2,1], t: [3,2], y1: 558, y2: 628, mid: 593, dash: true }
     ]
   },
 

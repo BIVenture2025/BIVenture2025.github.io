@@ -1,0 +1,358 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Build ocean freight operations on Microsoft Fabric - a guided walkthrough</title>
+<meta name="description" content="A plain-English, step-by-step guide to an end-to-end ocean freight estate on Microsoft Fabric: Eventstream, Eventhouse and a KQL geofence, a Fabric Map, Materialized Lake Views, a Direct Lake model and a four-page Power BI report.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--paper:#EFEAE0;--paper2:#E5DED1;--paper3:#F7F4EE;--white:#FCFAF7;
+ --ink:#16191E;--ink2:#2A3038;--ink3:#5C6470;--slate:#5C6E7C;--slate2:#8A9AA6;
+ --verm:#D8452C;--amber:#E5A94E;--sage:#7C8B7A;--line:rgba(22,25,30,.13);
+ --line2:rgba(22,25,30,.07);--serif:"Fraunces",Palatino,Georgia,serif;
+ --sans:"Inter","Segoe UI",-apple-system,Helvetica,Arial,sans-serif;
+ --mono:"SFMono-Regular",Consolas,Menlo,monospace}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16.5px;
+ line-height:1.68;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--serif);font-weight:400;letter-spacing:-.02em;line-height:1.14}
+a{color:var(--verm);text-decoration:none}a:hover{text-decoration:underline}
+code{font-family:var(--mono);font-size:.86em;background:var(--paper2);padding:.12em .38em;border-radius:3px}
+.shell{display:grid;grid-template-columns:268px 1fr;max-width:1340px;margin:0 auto}
+.side{position:sticky;top:0;height:100vh;overflow-y:auto;padding:30px 20px 40px;
+ border-right:1px solid var(--line)}
+.main{padding:44px 56px 120px;min-width:0}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.side{position:static;height:auto;
+ border-right:0;border-bottom:1px solid var(--line)}.main{padding:26px 18px 70px}}
+.brand{font-family:var(--serif);font-size:19px;line-height:1.2}
+.brand small{display:block;font-family:var(--sans);font-size:10.5px;letter-spacing:.17em;
+ text-transform:uppercase;color:var(--slate2);margin-bottom:7px}
+.prog{margin:18px 0 20px}
+.progbar{height:5px;background:var(--paper2);border-radius:3px;overflow:hidden}
+.progfill{height:100%;width:0;background:var(--verm);transition:width .35s}
+.progtxt{font-size:11.5px;color:var(--ink3);margin-top:7px}
+.nav a{display:block;padding:6px 10px;border-radius:5px;font-size:13.5px;color:var(--ink2);
+ border-left:2px solid transparent}
+.nav a:hover{background:var(--paper3);text-decoration:none}
+.nav a.on{background:var(--white);border-left-color:var(--verm);font-weight:600;color:var(--ink)}
+.nav .grp{font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--slate2);
+ margin:17px 0 5px;padding-left:10px}
+.tog{display:flex;gap:8px;align-items:center;font-size:12.5px;color:var(--ink3);margin-top:18px;
+ padding:9px 10px;background:var(--paper3);border-radius:6px;cursor:pointer;border:1px solid var(--line2)}
+.tog input{accent-color:var(--verm)}
+.hero{border-bottom:1px solid var(--line);padding-bottom:32px;margin-bottom:38px}
+.kick{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--verm);font-weight:600;
+ margin-bottom:13px}
+.hero h1{font-size:clamp(31px,4.4vw,50px);margin-bottom:15px}
+.lede{font-size:19px;color:var(--ink2);max-width:66ch}
+.facts{display:flex;flex-wrap:wrap;gap:26px;margin-top:26px}
+.fact b{display:block;font-family:var(--serif);font-size:26px;line-height:1}
+.fact span{font-size:11.5px;color:var(--ink3)}
+section{scroll-margin-top:18px;margin-bottom:50px}
+h2{font-size:31px;margin-bottom:6px}h3{font-size:20px;margin:28px 0 9px}
+.sub{color:var(--ink3);font-size:15px;margin-bottom:20px;max-width:70ch}
+p{margin-bottom:14px;max-width:72ch}
+ul,ol{margin:0 0 15px 24px}li{margin-bottom:8px;max-width:70ch}
+figure{margin:20px 0 24px}
+figure img{width:100%;border:1px solid var(--line);border-radius:9px;display:block;background:var(--white)}
+figcaption{font-size:12.5px;color:var(--ink3);margin-top:9px;font-style:italic}
+.step{background:var(--white);border:1px solid var(--line);border-radius:11px;padding:26px 30px;
+ margin-bottom:20px}
+.shead{display:flex;gap:15px;align-items:flex-start;margin-bottom:4px}
+.sno{flex:none;width:34px;height:34px;border-radius:8px;background:var(--ink);color:var(--paper);
+ font-family:var(--serif);font-size:16px;display:grid;place-items:center;margin-top:3px}
+.shead h3{margin:0;font-size:21px;flex:1}
+.chk{display:flex;gap:7px;align-items:center;font-size:12px;color:var(--ink3);cursor:pointer;
+ flex:none;padding-top:7px;user-select:none}
+.chk input{accent-color:var(--sage);width:16px;height:16px}
+.meta{font-size:11.5px;color:var(--slate2);margin:0 0 15px 49px}
+.step.done{opacity:.6}.step.done .sno{background:var(--sage)}
+.plain{font-size:16.5px;color:var(--ink2)}
+.why{background:var(--paper3);border-radius:8px;padding:13px 17px;margin:14px 0;font-size:14.5px}
+.why b{color:var(--ink)}
+.code{position:relative;margin:14px 0}
+.code pre{background:#1B1F26;color:#E8E3DA;padding:15px 17px;border-radius:8px;overflow-x:auto;
+ font-family:var(--mono);font-size:12.6px;line-height:1.62}
+.cp{position:absolute;top:7px;right:8px;background:#2E353F;color:#C8CDD4;border:0;padding:4px 10px;
+ border-radius:5px;font-size:11px;cursor:pointer;font-family:var(--sans)}
+.cp:hover{background:#3C4552;color:#fff}.cp.ok{background:var(--sage);color:#fff}
+details{margin:14px 0;border-radius:0 7px 7px 0}
+details summary{cursor:pointer;font-weight:600;font-size:14.5px;list-style:none;display:flex;
+ gap:9px;align-items:baseline;padding:12px 17px}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:"▸";font-size:12px;transition:transform .18s}
+details[open] summary::before{transform:rotate(90deg)}
+details .body{padding:0 17px 15px 34px;font-size:14.5px}
+.trap{border-left:3px solid var(--verm);background:#FBF0EC}
+.trap summary{color:#A8321F}
+.tech{border-left:3px solid var(--slate2);background:var(--paper3)}
+.tech summary{color:var(--slate)}
+.note{border-left:3px solid var(--slate2);background:var(--paper3);padding:13px 17px;
+ border-radius:0 7px 7px 0;margin:15px 0;font-size:14.5px}
+.warn{border-left:3px solid var(--amber);background:#FDF6E9;padding:13px 17px;
+ border-radius:0 7px 7px 0;margin:15px 0;font-size:14.5px}
+.win{border-left:3px solid var(--sage);background:#F1F4EF;padding:13px 17px;
+ border-radius:0 7px 7px 0;margin:15px 0;font-size:14.5px}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14.2px}
+th{text-align:left;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);
+ border-bottom:1.5px solid var(--line);padding:9px 11px 9px 0}
+td{padding:10px 11px 10px 0;border-bottom:1px solid var(--line2);vertical-align:top}
+.dl{display:block;background:var(--ink);color:var(--paper);padding:18px 22px;border-radius:10px;
+ margin:18px 0;text-decoration:none}
+.dl:hover{text-decoration:none;background:#22272F}
+.dl b{display:block;font-family:var(--serif);font-size:20px;margin-bottom:3px;color:var(--paper)}
+.dl span{font-size:13.5px;color:#A8AEB6}
+.hideNonTrap .step > *:not(.trap):not(.shead):not(.meta){display:none}
+.hideNonTrap .nogo{display:none}
+footer{border-top:1px solid var(--line);padding-top:26px;margin-top:56px;font-size:13px;color:var(--ink3)}
+</style></head><body>
+<div class="shell">
+<aside class="side">
+ <div class="brand"><small>Guided walkthrough</small>Build ocean freight operations on Microsoft Fabric</div>
+ <div class="prog"><div class="progbar"><div class="progfill"></div></div>
+  <div class="progtxt">0 of 9 steps done</div></div>
+ <nav class="nav"><a href="#why">Why</a><a href="#what">What</a><a href="#code">Get the code</a><a href="#s1">1. Set up the workspace, the Variable Library and Git</a><a href="#s2">2. Generate the data and freeze the control totals</a><a href="#s3">3. Create the Eventhouse and the geofence</a><a href="#s4">4. Wire the Eventstream and replay the pings</a><a href="#s5">5. Draw the Fabric Map</a><a href="#s6">6. Build Silver and Gold as Materialized Lake Views</a><a href="#s7">7. Deploy the Direct Lake model and build the report</a><a href="#s8">8. Bind the ontology (optional)</a><a href="#s9">9. Deploy from Git into an empty workspace</a><a href="#traps">Traps</a><a href="#not">Limits</a></nav>
+ <label class="tog"><input type="checkbox" id="trapOnly"> Show only the gotchas</label>
+</aside>
+<main class="main">
+
+<section id="top"><div class="hero">
+<h1>Build ocean freight operations on Microsoft Fabric</h1>
+<p class="sub">Simulated ship positions stream into an Eventhouse, a KQL geofence turns them into
+port calls, a Fabric Map shows the fleet live, and Materialized Lake Views build demurrage and voyage
+economics for a Direct Lake report. Nine steps, roughly 12 hours, every figure checked against a
+value computed somewhere else.</p>
+</div></section>
+
+<section id="why"><h2>Why anyone builds this</h2>
+<p class="plain">A feeder line runs on a few questions asked every day: where are the ships, which
+port is slow, which boxes have stayed past their free days, and is each voyage paying for itself?
+The answers usually come from a vessel tracking screen, a terminal report and a spreadsheet, each
+on its own clock.</p>
+<p class="plain">This build puts them on one estate. Port calls come from the ship's own position,
+not from someone keying in an arrival time, and the money follows from the same events.</p>
+</section>
+
+<section id="what"><h2>What you are building</h2>
+<table><thead><tr><th>Layer</th><th>What it is</th></tr></thead><tbody>
+<tr><td><b>Generator</b></td><td>One seeded Python file: 12 vessels, 10 ports, 60 voyages over 60 days, 146,205 rows in all</td></tr>
+<tr><td><b>Eventstream &rarr; Eventhouse</b></td><td>131,544 AIS pings replayed through a custom endpoint</td></tr>
+<tr><td><b>KQL geofence</b></td><td>Pings into arrivals and departures; 300 of 300 port calls matched</td></tr>
+<tr><td><b>Fabric Map</b></td><td>Vessels, port polygons and routes as live KQL layers</td></tr>
+<tr><td><b>Materialized Lake Views</b></td><td>4 Silver and 4 Gold views with data-quality rules; 43 of 43 checks pass</td></tr>
+<tr><td><b>Direct Lake model and report</b></td><td>25 measures, 4 pages, 45 visuals</td></tr>
+<tr><td><b>Ontology</b></td><td>Bound over Gold; its graph did not materialize (step 8)</td></tr>
+</tbody></table>
+<div class="note"><b>All data is synthetic</b>, generated from a fixed seed. The operator, StraitsLine, is fictional. The ten port positions are real approximate coordinates, and five of them were checked against a public CC0 port list, all within 1.1 km.</div>
+</section>
+
+<section id="code"><h2>Get the code</h2>
+<p class="sub">Everything the steps below tell you to run is in one public repository, MIT licensed,
+no sign-up. <b>Get it before step 1</b>: the Variable Library is the first thing you deploy.</p>
+<div class="win"><b><a href="https://github.com/BIVenture2025/straitsline-ocean-freight-fabric">github.com/BIVenture2025/straitsline-ocean-freight-fabric</a></b> &nbsp;&middot;&nbsp; <a href="https://github.com/BIVenture2025/straitsline-ocean-freight-fabric/archive/refs/heads/main.zip"><b>Download the repository as a ZIP</b></a> &nbsp;&middot;&nbsp; or clone it:</div><div class="code"><pre>git clone https://github.com/BIVenture2025/straitsline-ocean-freight-fabric.git
+cd straitsline-ocean-freight-fabric
+python3 generator/straitsline_gen.py --out ./out</pre></div>
+<table><thead><tr><th style="width:22%">Folder</th><th>What is in it</th></tr></thead><tbody>
+<tr><td><code>generator/</code></td><td>The seeded data generator. Every tunable number comes from the Variable Library</td></tr>
+<tr><td><code>notebooks/</code></td><td>Generate, Replay and MLV notebooks, the scripts that build them, and offline test harnesses</td></tr>
+<tr><td><code>platform/</code></td><td>Variable Library, Eventstream, KQL geofence and its checks, KQL database schema, Map, MLV SQL, Ontology</td></tr>
+<tr><td><code>model/</code></td><td>The Direct Lake semantic model as TMDL</td></tr>
+<tr><td><code>report/</code></td><td>The four-page PBIR report and the script that generates it</td></tr>
+<tr><td><code>docs/</code></td><td>Contract, specs, control totals, closure documents, and this guide</td></tr>
+</tbody></table>
+<div class="note"><b>If you only open three things first:</b> <code>platform/KQL_StraitsLine/geofence.kql</code> is how pings become port calls, <code>platform/MLV_StraitsLine/mlv.sql</code> is the demurrage and margin logic, and <code>docs/CONTROL_TOTALS.md</code> is what every check is measured against.</div>
+</section>
+
+<h2 id="build">The build</h2>
+
+<section id="s1"><div class="step">
+ <div class="shead"><div class="sno">1</div><h3>Set up the workspace, the Variable Library and Git</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 45 min</p>
+ 
+<p class="plain">Everything lives in one Fabric <b>workspace</b> on a <b>capacity</b>. Three things
+go in before any data: the Variable Library, the Git connection and the Lakehouse.</p>
+<ol>
+<li>Sign in at <b>app.fabric.microsoft.com</b> with a work or school account and create a workspace
+on your capacity.</li>
+<li>Deploy <code>platform/VL_StraitsLine.VariableLibrary</code> <b>first</b>. Every tunable number
+the generator uses (fleet size, window, congestion strength, demurrage tariff, free days) is read
+from it, never from a literal in code.</li>
+<li>Connect the workspace to Git (Workspace settings &rarr; Git integration).</li>
+<li>Create a Lakehouse called <code>LH_StraitsLine</code> with <b>schemas enabled</b>.</li>
+</ol>
+<div class="why"><b>Why the Variable Library comes first:</b> the demurrage tariff (75, 150 and 200 USD per chargeable day by box type) and the 5 free days live there. The views in step 6 and the generator in step 2 both read them, so changing a tariff is one edit, not a hunt through SQL.</div><details class="trap"><summary>A schema-enabled Lakehouse is not the default, and the model in step 7 assumes it</summary><div class="body">The tables land in <code>ops</code>, <code>ref</code>, <code>stream</code>, <code>silver</code> and <code>gold</code> schemas. Earlier builds had only proven Direct Lake against <code>dbo</code>. This one proved it against a schema-enabled Lakehouse with a two-table probe before the rest of the model was written (docs/MODEL_SPEC.md).</div></details>
+</div></section>
+<section id="s2"><div class="step">
+ <div class="shead"><div class="sno">2</div><h3>Generate the data and freeze the control totals</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 1 h</p>
+ 
+<p class="plain">A container feeder line on a 60-day window: 12 vessels, 10 ports, 60 voyages,
+about 4,000 bookings and 9,000 containers, plus the AIS pings the ships would have sent. The
+generator is one seeded Python file with no wall-clock read anywhere.</p>
+<div class="code"><pre>python3 generator/straitsline_gen.py --out ./out
+# writes the CSVs and _run_manifest.json with the SHA256 of every file</pre></div>
+<ol>
+<li>Upload <code>generator/straitsline_gen.py</code> to the Lakehouse at
+<code>Files/generator/</code>.</li>
+<li>Build the Generate notebook with <code>notebooks/build_nb_generate.py</code>, deploy it, and
+run it. It checks the uploaded file's SHA256 before importing it.</li>
+<li>Check every row count against <a href="https://github.com/BIVenture2025/straitsline-ocean-freight-fabric/blob/main/docs/CONTROL_TOTALS.md">docs/CONTROL_TOTALS.md</a>:
+<b>146,205 rows</b> in total.</li>
+</ol>
+<details class="trap"><summary>Large notebook definitions corrupt in transit; small ones do not</summary><div class="body">The first Generate notebook carried the generator inside itself as a compressed payload, about 33,000 characters. It was refused as a corrupted payload. The fix that worked first time: ship the logic as a file in OneLake and keep the notebook a thin driver that imports it and checks its hash. A wrong or stale upload then fails loudly instead of quietly generating different data.</div></details><div class="note"><b>The totals were frozen only after three separate measurements agreed.</b> Two runs of the generator produced byte-identical files, and the tenant's row counts matched both.</div>
+</div></section>
+<section id="s3"><div class="step">
+ <div class="shead"><div class="sno">3</div><h3>Create the Eventhouse and the geofence</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 1.5 h</p>
+ 
+<p class="plain">The Eventhouse holds the live pings. A KQL <b>geofence</b> turns those pings into
+port calls: when a ship's position enters a port polygon, that is an arrival; when it leaves, a
+departure. Nobody keys in an arrival time.</p>
+<ol>
+<li>Create the Eventhouse <code>EH_StraitsLine</code>. Its KQL database schema is in
+<code>platform/EH_StraitsLine.KQLDatabase/</code>.</li>
+<li>Regenerate the polygons from your generator output with
+<code>platform/KQL_StraitsLine/build_kql.py</code>, then run
+<code>platform/KQL_StraitsLine/geofence.kql</code> in the database.</li>
+<li>Optional, and worth it: <code>platform/KQL_StraitsLine/verify_geofence_offline.py</code> runs
+the same rule in plain Python. It scored <b>300 of 300</b> port calls before anything touched the
+tenant.</li>
+</ol>
+<details class="trap"><summary>An update policy that joins a second table is refused with no reason</summary><div class="body">The enrichment policy joins pings to the 10-row port table. It answered a bare <code>BadRequest</code> through every syntax tried. The cause: an Eventhouse turns on streaming ingestion for every table by default, and a policy that joins needs it <b>off</b> on the source table. Run <code>.alter table ais_ping_raw policy streamingingestion disable</code>, and the original policy is accepted. A 30-second ingestion batching window keeps it close to live.</div></details><details class="tech"><summary>How that one was found</summary><div class="body"><p>Three retries that each changed one thing learned nothing. What worked was taking the refused command apart one property at a time, with a version known to be accepted as the control. The policy over the source alone was accepted; every variant that read the port table was refused. Microsoft's update-policy page names the streaming-ingestion rule once you know to look for it.</p></div></details>
+</div></section>
+<section id="s4"><div class="step">
+ <div class="shead"><div class="sno">4</div><h3>Wire the Eventstream and replay the pings</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 1.5 h</p>
+ 
+<p class="plain">An <b>Eventstream</b> takes events from a custom endpoint and lands them in the
+Eventhouse. The Replay notebook sends the generator's pings through it, in time order.</p>
+<ol>
+<li>Deploy <code>platform/ES_StraitsLine.Eventstream</code> (custom endpoint &rarr; Eventhouse).</li>
+<li>Build the Replay notebook with <code>notebooks/build_nb_replay.py</code> and run it, passing the
+endpoint's connection string as a job parameter. The Eventstream API returns that string, so no one
+has to paste it. Never print it.</li>
+<li>Score the result with <code>platform/KQL_StraitsLine/reconcile_geofence_tenant.py</code>.</li>
+</ol>
+<div class="win"><b>What this build measured:</b> 131,544 of 131,544 pings sent and ingested, 129,600 after dedupe, and the geofence matched <b>300 of 300</b> port calls to the generator's ground truth. The median polygon entry came 37.5 minutes before berth arrival, the same figure as the offline proof (docs/POST_MORTEM.md).</div><details class="trap"><summary>A notebook parameter in the wrong shape is accepted and ignored</summary><div class="body">The job API takes the request, starts the run and leaves the parameter at its default. For a notebook, parameters go under <code>executionData.parameters</code> as <code>{name: {value, type}}</code>, not as a top-level list. Found with a two-cell probe notebook carrying no secret: it just returned the value it received.</div></details><details class="trap"><summary><code>%pip install</code> wipes the parameters, and API runs skip it anyway</summary><div class="body">An inline install restarts Python, so a parameter set before it is gone afterwards. And inline installs are off in API and pipeline runs unless the run passes <code>_inlineInstallationEnabled</code>. Put the install cell first and pass the flag.</div></details>
+</div></section>
+<section id="s5"><div class="step">
+ <div class="shead"><div class="sno">5</div><h3>Draw the Fabric Map</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 45 min</p>
+ 
+<p class="plain">The <b>Fabric Map</b> is the hero view: vessels, port polygons and routes, all
+three as live KQL layers over the same Eventhouse. The polygons the map draws are the same table
+the geofence tests against, so the picture cannot disagree with the port calls.</p>
+<div class="code"><pre>python3 platform/build_map.py   # emits the MAP_StraitsLine definition</pre></div><figure><img src="img/straitsline/map/S4_map_render_region.jpg" alt="The Map rendering all three layers over the Straits of Malacca." loading="lazy"><figcaption>The Map rendering all three layers over the Straits of Malacca.</figcaption></figure><figure><img src="img/straitsline/map/S4_map_render_singapore.jpg" alt="Zoomed in on Singapore: port polygon and vessel positions." loading="lazy"><figcaption>Zoomed in on Singapore: port polygon and vessel positions.</figcaption></figure><details class="trap"><summary>The schema text and the example disagree on a casing, and only the render settles it</summary><div class="body"><code>itemType: "KqlDatabase"</code>, as the documented example writes it, binds and renders. The service echoes whatever you send on read-back, so a read-back proves nothing here. Open the map and look.</div></details>
+</div></section>
+<section id="s6"><div class="step">
+ <div class="shead"><div class="sno">6</div><h3>Build Silver and Gold as Materialized Lake Views</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 2 h</p>
+ 
+<p class="plain"><b>Materialized Lake Views</b> are SQL views that Fabric stores and keeps
+refreshed, with data-quality rules attached. Eight of them: four Silver (clean pings, port events,
+port calls, containers) and four Gold (port performance, container demurrage, voyage contribution
+margin, customer exposure).</p>
+<ol>
+<li>Build the notebook with <code>notebooks/build_nb_mlv.py</code>; the SQL is
+<code>platform/MLV_StraitsLine/mlv.sql</code>.</li>
+<li>Import it into the workspace (Notebook &rarr; Import) and run it. It writes every graded
+assertion to a table, so the result can be read without the notebook UI.</li>
+</ol>
+<div class="win"><b>43 of 43</b> assertions pass on the final build, and the lineage view shows both layers (docs/GOLD_SPEC.md).</div><figure><img src="img/straitsline/mlv/S5c_mlv_lineage_full.jpg" alt="Fabric&#x27;s lineage view of the eight views, Silver feeding Gold." loading="lazy"><figcaption>Fabric's lineage view of the eight views, Silver feeding Gold.</figcaption></figure><details class="trap"><summary>DISTINCT, row_number() and AVG quietly turn off incremental refresh</summary><div class="body">Microsoft's MLV page says each of them disqualifies a view from incremental refresh, with a silent fall back to a full refresh. Dedupe with <code>GROUP BY</code> and <code>MIN</code>/<code>COUNT</code>; keep averages and ratios in the semantic model.</div></details><details class="trap"><summary>An answer key that rounds a number it grades exactly fails a correct build</summary><div class="body">The first run scored 32 of 34. Both failures were the same figure: freight expected as 23,212,588, actual 23,212,588.53. The build was right; the expected value had been copied at display precision. Get expected values by query and paste the query output.</div></details><div class="note"><b>Demurrage only, not detention.</b> The data has a discharge time and a gate-out time, which is demurrage. Detention needs the time the empty box comes back, and the generator does not produce one.</div>
+</div></section>
+<section id="s7"><div class="step">
+ <div class="shead"><div class="sno">7</div><h3>Deploy the Direct Lake model and build the report</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 3 h</p>
+ 
+<p class="plain">The semantic model reads the Gold views in place through <b>Direct Lake</b>: no
+import, no refresh schedule. Seven Direct Lake tables, one calculated date table and 25 measures.
+The report is four pages and 45 visuals, generated from code.</p>
+<ol>
+<li>Deploy <code>model/SM_StraitsLine.SemanticModel</code>, replacing the placeholders listed in
+the README with your own values.</li>
+<li>Build the report with <code>report/build_report.py</code> and open
+<code>report/P30_StraitsLine.pbip</code> in Power BI Desktop.</li>
+<li>Check the figures against docs/MODEL_SPEC.md before you trust a picture: 9 of 9 tied figures
+matched exactly in this build.</li>
+</ol>
+<figure><img src="img/straitsline/report/1%20%C2%B7%20Network.png" alt="Page 1, Network: the fleet, the ports and the headline figures." loading="lazy"><figcaption>Page 1, Network: the fleet, the ports and the headline figures.</figcaption></figure><figure><img src="img/straitsline/report/2%20%C2%B7%20Port%20Performance.png" alt="Page 2, Port Performance: berth waits by port." loading="lazy"><figcaption>Page 2, Port Performance: berth waits by port.</figcaption></figure><figure><img src="img/straitsline/report/3%20%C2%B7%20Demurrage%20Exposure.png" alt="Page 3, Demurrage Exposure: who is liable and for how much." loading="lazy"><figcaption>Page 3, Demurrage Exposure: who is liable and for how much.</figcaption></figure><figure><img src="img/straitsline/report/4%20%C2%B7%20Voyage%20Economics.png" alt="Page 4, Voyage Economics: contribution margin by voyage." loading="lazy"><figcaption>Page 4, Voyage Economics: contribution margin by voyage.</figcaption></figure><details class="trap"><summary>A title with a selector on it is ignored, and the validator is happy</summary><div class="body">The report took a working sibling's title code verbatim. Every one of 30 data visuals showed Desktop's automatic title and no subtitle. Removing <code>selector: {"id": "default"}</code> from the title and subtitle fixed all of them. Only a screenshot found it.</div></details><details class="trap"><summary>Three more things only a screenshot shows</summary><div class="body">Cards round to <code>$23M</code> unless you set the display units. A horizontal bar chart scrolls when it is too short for its categories, so a column chart of the same data fitted better. A table hid its last row behind its own totals row.</div></details><div class="warn"><b>Contribution margin, not P&amp;L.</b> There is no bunker, port dues or terminal handling data, so the margin is freight plus demurrage minus vessel operating cost. All 60 voyages come out positive at about 78% (margin over freight plus demurrage), which is not a realistic feeder-line margin, and the report says contribution margin for that reason.</div>
+</div></section>
+<section id="s8"><div class="step">
+ <div class="shead"><div class="sno">8</div><h3>Bind the ontology (optional)</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 1 h</p>
+ 
+<p class="plain">A Fabric <b>ontology</b> describes the business objects (vessel, port, voyage,
+customer, booking, container, port call) and how they relate, bound to the Gold tables.</p>
+<div class="code"><pre>python3 platform/build_ontology.py ./ont_out</pre></div><div class="warn"><b>In this build the ontology bound and read back, and its graph never materialized.</b> Configure Graph read all 7 entities as <i>Ineligible</i>, "Unsupported Data Source", on two different source forms. The cause was not established. The five multi-hop questions the graph was meant to answer are answered in SQL instead, and cross-checked (docs/GQL_IMPACT_QUESTIONS.md).</div><details class="trap"><summary>A definition that deploys and reads back does not prove the feature works</summary><div class="body">The ontology passed its first gate on evidence that only showed the API accepted the shape. The graph is a separate step, opened in the portal, and it is where this build stopped. If you rely on the graph, test that it returns a row before building anything on top of it.</div></details><details class="trap"><summary>A portal reading you did not capture is a claim, not a result</summary><div class="body">One look at Configure Graph reported 6 of 7 entities eligible. It was not captured, a session was planned on it, and the next look read 7 of 7 ineligible. Screenshot any reading that decides your next step.</div></details>
+</div></section>
+<section id="s9"><div class="step">
+ <div class="shead"><div class="sno">9</div><h3>Deploy from Git into an empty workspace</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 30 min</p>
+ 
+<p class="plain">The last test of any estate: can it be rebuilt from the repository alone?</p>
+<p class="plain">In this build's test, a from-scratch deploy reached <b>8 of 10</b> item folders.
+The Eventstream and the Map failed because they point at the KQL database, and Git did not carry
+it at the time.</p>
+<div class="note"><b>Since then:</b> the KQL database definition, with its tables, functions and policies, has been captured into <code>platform/EH_StraitsLine.KQLDatabase/</code>. The full redeploy was <b>not</b> re-run with it, so treat step 3 as the reliable route and this folder as the one to try.</div>
+</div></section>
+
+<section id="traps"><h2>Every trap, in one table</h2>
+<table><thead><tr><th>Trap</th><th>What happens</th></tr></thead><tbody><tr><td><b>Join in an update policy, streaming ingestion on</b></td><td>Bare BadRequest. Turn streaming ingestion off on the source table.</td></tr><tr><td><b>Notebook parameters as a top-level list</b></td><td>Accepted and ignored. Use executionData.parameters.</td></tr><tr><td><b>%pip install after the parameters cell</b></td><td>Restarts Python and loses them. Install first and pass _inlineInstallationEnabled.</td></tr><tr><td><b>Big notebook definition in one payload</b></td><td>Refused as corrupted. Ship logic as a OneLake file and keep the notebook thin.</td></tr><tr><td><b>Map itemType casing</b></td><td>Read-back echoes what you sent. Only the render proves the binding.</td></tr><tr><td><b>DISTINCT, row_number() or AVG in an MLV</b></td><td>Silent fall back to full refresh. GROUP BY with MIN/COUNT.</td></tr><tr><td><b>Expected value copied at display precision</b></td><td>A correct build fails. Paste query output.</td></tr><tr><td><b>Title or subtitle with a selector</b></td><td>Ignored by Desktop, accepted by the validator.</td></tr><tr><td><b>Card display units, short bar charts, table totals</b></td><td>Only visible in a screenshot.</td></tr><tr><td><b>Ontology deployed and read back</b></td><td>Proves the definition, not the graph. Test for a returned row.</td></tr><tr><td><b>Uncaptured portal reading</b></td><td>Did not reproduce. Capture any reading that decides a step.</td></tr></tbody></table>
+</section>
+
+<section id="not"><h2>What this build does not do</h2>
+<p class="plain">Stated plainly, because a portfolio piece that hides its gaps is worth less than one
+that names them.</p>
+<ul>
+<li><b>No GQL multi-hop.</b> The ontology's graph never materialized; 0 of 5 impact questions ran
+on it. All five are answered in SQL and cross-checked.</li>
+<li><b>Contribution margin, not P&amp;L.</b> No bunker, port dues or terminal handling source.</li>
+<li><b>Demurrage only.</b> Detention needs an empty-return time the data does not have.</li>
+<li><b>Congestion shows; a simple ranking does not identify it.</b> The injected congestion is
+visible in the mean and the tail, but ranking ports by one statistic picks the wrong one
+(docs/MODEL_SPEC.md, section 7).</li>
+<li><b>The from-scratch deploy</b> reached 8 of 10 item folders and was not re-run after the KQL
+database schema was added.</li>
+<li><b>No row-level security, no CI/CD pipeline.</b> Out of scope.</li>
+</ul>
+</section>
+
+<footer>
+<p class="plain">Built by Yeong Wai Son, Kuala Lumpur. Source, specs and the full closure pack:
+<a href="https://github.com/BIVenture2025/straitsline-ocean-freight-fabric">github.com/BIVenture2025/straitsline-ocean-freight-fabric</a>. Progress ticks are
+in-memory only and reset when you reload.</p>
+</footer>
+</main></div>
+<script>
+const boxes=[...document.querySelectorAll('.chk input')];
+const fill=document.querySelector('.progfill'),ptxt=document.querySelector('.progtxt');
+function upd(){const n=boxes.filter(b=>b.checked).length;
+ fill.style.width=(n/boxes.length*100)+'%';ptxt.textContent=n+' of '+boxes.length+' steps done';}
+boxes.forEach(b=>b.addEventListener('change',()=>{b.closest('.step').classList.toggle('done',b.checked);upd();}));
+upd();
+document.querySelectorAll('.code').forEach(c=>{const b=document.createElement('button');
+ b.className='cp';b.textContent='Copy';
+ b.onclick=()=>navigator.clipboard.writeText(c.querySelector('pre').innerText).then(()=>{
+  b.textContent='Copied';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1400)});
+ c.appendChild(b);});
+const links=[...document.querySelectorAll('.nav a')];
+const secs=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)
+ links.forEach(l=>l.classList.toggle('on',l.getAttribute('href')==='#'+e.target.id))}),
+ {rootMargin:'-12% 0px -78% 0px'}).observe&&secs.forEach(s=>
+ new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)
+ links.forEach(l=>l.classList.toggle('on',l.getAttribute('href')==='#'+e.target.id))}),
+ {rootMargin:'-12% 0px -78% 0px'}).observe(s));
+document.getElementById('trapOnly').addEventListener('change',e=>
+ document.body.classList.toggle('hideNonTrap',e.target.checked));
+</script></body></html>

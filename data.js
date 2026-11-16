@@ -657,10 +657,34 @@ const CV = {
       note: "Synthetic data, fixed seed, 60 days; StraitsLine is fictional and no figure represents a real vessel, voyage or customer. The ten port positions are real approximate coordinates. Published as a rebuildable reference \u2014 the generator, the KQL, the map, the views, the model, the report and a step-by-step walkthrough \u2014 with the gaps named: no graph queries, and contribution margin rather than P&L."
     },
     {
+      id: "fabric-rimbun-credit-desk",
+      diagram: "rimbunDiagram",
+      category: "Data Platform",
+      domain: "Credit Management & Receivables",
+      no: "19",
+      kind: "architecture",
+      title: "A Credit Control Desk on Microsoft Fabric and Power Platform",
+      meta: "Materialized Lake Views \u2192 ML + scorecard \u2192 MFRS 9 provision \u2192 Dataverse app and flows \u2192 Direct Lake",
+      featured: true,
+      desc: "A credit control desk at a B2B distributor answers the same questions every day: who owes what, who is getting riskier, how much provision to hold, and who should approve this limit request or held order. In this build the numbers and the decisions sit on one loop. Synthetic ERP receivables for 600 trade customers land in a Fabric Lakehouse, and eight Materialized Lake Views build exposure, ageing and payment behaviour that reconcile to the source to the cent. A registered ML model and a points scorecard grade every customer; the scorecard is the champion because it is nearly as good and a credit manager can explain it. An MFRS 9 provision matrix turns roll rates into the expected credit loss. Gold scores reach a canvas app on Dataverse, two approval flows route each request by a limit-of-authority matrix and log the decision, and a Copy job carries every request and decision back into the lake for a Direct Lake model and a six-page report. A pipeline chains the refresh with a verdict gate after every notebook. The gaps are published with it: no from-scratch redeploy was run, and only the two lower approval tiers were tested end to end.",
+      use: "Credit and receivables teams at distributors and manufacturers, and anyone who wants to see Fabric data science, Dataverse and Power Automate working on one loop rather than side by side.",
+      tags: ["Microsoft Fabric", "Materialized Lake Views", "MLflow", "Credit Scoring", "MFRS 9 ECL", "Dataverse", "Power Apps", "Power Automate", "Copy Job", "Direct Lake", "Git Integration", "DAX"],
+      signals: [
+        { v: "RM 546,880", k: "Expected credit loss on RM 156.1m of open receivables, equal three ways by query" },
+        { v: "0.709 / 0.692", k: "Out-of-time test AUC, ML model against the points scorecard; the explainable scorecard is the champion" },
+        { v: "263,402 rows", k: "Generated, landed and reconciled to the cent through eight Materialized Lake Views" },
+        { v: "10 min 23 s", k: "Full refresh pipeline, 13 of 13 activities, with a verdict gate after every notebook" }
+      ],
+      guide: "https://biventure2025.github.io/rimbun-niaga-credit-desk-fabric/docs/guide.html",
+      guideTxt: "Rebuild guide \u2197",
+      repo: "https://github.com/BIVenture2025/rimbun-niaga-credit-desk-fabric",
+      note: "Synthetic data, fixed seed, January 2024 to October 2026; Rimbun Niaga Distribution Sdn Bhd is fictional and no figure represents a real company or person. Published as a rebuildable reference: the generator, the views, scoring and ECL, the Dataverse solution with the app and flows, the model, the report and a step-by-step walkthrough, with the gaps named."
+    },
+    {
       id: "halloween-fear-costume",
       category: "Analytic Dashboard",
       domain: "Data Storytelling",
-      no: "19",
+      no: "20",
       kind: "powerbi",
       title: "Fear Changes Costume",
       meta: "1 page \u00b7 4 Deneb visuals",
@@ -693,7 +717,7 @@ const CV = {
       id: "wc2027-goodnight-inn",
       category: "Analytic Dashboard",
       domain: "Investment Strategy",
-      no: "20",
+      no: "21",
       kind: "powerbi",
       title: "Goodnight Inn \u2014 Own the Guest",
       meta: "2 pages \u00b7 hidden explainer",
@@ -989,6 +1013,45 @@ const CV = {
       { f: [0,0], t: [2,0], tx: 40, y1: 202, y2: 506, corridor: 18 },
       { f: [2,1], t: [3,0], tx: 290, y1: 558, y2: 628, mid: 593 },
       { f: [2,1], t: [3,2], y1: 558, y2: 628, mid: 593, dash: true }
+    ]
+  },
+
+  rimbunDiagram: {
+    title: "PLATFORM ARCHITECTURE \u00b7 FABRIC AND POWER PLATFORM CREDIT DESK \u00b7 ONE LOOP",
+    caption: "Receivables become exposure, grades and a provision in Fabric; the scores reach a Power App through Dataverse, and every request and decision returns to the lake for the next run and the report",
+    height: 830,
+    geom: [
+      { ly: 84,  y: 98,  h: 104, gap: 26, ts: 22, ss: 14.5, t1: 38, s1: 64, sl: 20 },
+      { ly: 262, y: 276, h: 104, gap: 26, ts: 22, ss: 14.5, t1: 38, s1: 64, sl: 20 },
+      { ly: 440, y: 454, h: 104, gap: 26, ts: 22, ss: 14.5, t1: 38, s1: 64, sl: 20 },
+      { ly: 618, y: 632, h: 104, gap: 26, ts: 22, ss: 14.5, t1: 38, s1: 64, sl: 20 }
+    ],
+    lanes: [
+      { label: "SOURCE \u00b7 SEEDED AND REPRODUCIBLE", boxes: [
+        { t: "Data generator", s: ["600 customers, 90,357 invoices", "263,402 rows, totals frozen"] },
+        { t: "Variable Library", s: ["As-of date, seed, window", "No number hard-coded"] },
+        { t: "Dataverse history", s: ["150 requests, 150 decisions", "Tiers held in a table"] }
+      ]},
+      { label: "FABRIC \u00b7 GOLD, SCORES", boxes: [
+        { t: "Silver \u00b7 Gold", s: ["8 Materialized Lake Views", "30 checks, 0 failed"], arrow: true },
+        { t: "Scoring", s: ["ML model and scorecard", "Test AUC 0.709 and 0.692"], arrow: true },
+        { t: "Provision and cache", s: ["MFRS 9: RM 546,880", "Gold scores to Dataverse"], accent: true }
+      ]},
+      { label: "POWER PLATFORM \u00b7 THE DESK", boxes: [
+        { t: "Copy job to the lake", s: ["Requests and decisions", "Hourly, within 56 min"] },
+        { t: "Approval flows", s: ["Routed by the matrix", "Decision logged"] },
+        { t: "Canvas app", s: ["Limit and hold requests", "Grade beside the request"], accent: true }
+      ]},
+      { label: "SERVE \u00b7 DIRECT LAKE", boxes: [
+        { t: "Semantic model", s: ["14 tables, 39 measures", "Read back to the cent"], arrow: true },
+        { t: "Six-page report", s: ["Generated from code", "Every page captured"] },
+        { t: "Refresh pipeline", s: ["13 activities, verdict gates", "Block test failed as designed"] }
+      ]}
+    ],
+    links: [
+      { f: [0,0], t: [1,0], tx: 290, y1: 202, y2: 272, mid: 237 },
+      { f: [1,2], t: [2,2], y1: 380, y2: 450 },
+      { f: [2,0], t: [3,0], tx: 290, y1: 558, y2: 628, mid: 593 }
     ]
   },
 

@@ -1,0 +1,348 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Build a credit control desk on Microsoft Fabric and Power Platform - a guided walkthrough</title>
+<meta name="description" content="A plain-English, step-by-step guide to a credit control desk on Microsoft Fabric and Power Platform: Materialized Lake Views, an ML model and a points scorecard, an MFRS 9 provision, Dataverse, a canvas app with approval flows, Copy jobs both ways, a Direct Lake model and a six-page report.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--paper:#EFEAE0;--paper2:#E5DED1;--paper3:#F7F4EE;--white:#FCFAF7;
+ --ink:#16191E;--ink2:#2A3038;--ink3:#5C6470;--slate:#5C6E7C;--slate2:#8A9AA6;
+ --verm:#D8452C;--amber:#E5A94E;--sage:#7C8B7A;--line:rgba(22,25,30,.13);
+ --line2:rgba(22,25,30,.07);--serif:"Fraunces",Palatino,Georgia,serif;
+ --sans:"Inter","Segoe UI",-apple-system,Helvetica,Arial,sans-serif;
+ --mono:"SFMono-Regular",Consolas,Menlo,monospace}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16.5px;
+ line-height:1.68;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--serif);font-weight:400;letter-spacing:-.02em;line-height:1.14}
+a{color:var(--verm);text-decoration:none}a:hover{text-decoration:underline}
+code{font-family:var(--mono);font-size:.86em;background:var(--paper2);padding:.12em .38em;border-radius:3px}
+.shell{display:grid;grid-template-columns:268px 1fr;max-width:1340px;margin:0 auto}
+.side{position:sticky;top:0;height:100vh;overflow-y:auto;padding:30px 20px 40px;
+ border-right:1px solid var(--line)}
+.main{padding:44px 56px 120px;min-width:0}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.side{position:static;height:auto;
+ border-right:0;border-bottom:1px solid var(--line)}.main{padding:26px 18px 70px}}
+.brand{font-family:var(--serif);font-size:19px;line-height:1.2}
+.brand small{display:block;font-family:var(--sans);font-size:10.5px;letter-spacing:.17em;
+ text-transform:uppercase;color:var(--slate2);margin-bottom:7px}
+.prog{margin:18px 0 20px}
+.progbar{height:5px;background:var(--paper2);border-radius:3px;overflow:hidden}
+.progfill{height:100%;width:0;background:var(--verm);transition:width .35s}
+.progtxt{font-size:11.5px;color:var(--ink3);margin-top:7px}
+.nav a{display:block;padding:6px 10px;border-radius:5px;font-size:13.5px;color:var(--ink2);
+ border-left:2px solid transparent}
+.nav a:hover{background:var(--paper3);text-decoration:none}
+.nav a.on{background:var(--white);border-left-color:var(--verm);font-weight:600;color:var(--ink)}
+.nav .grp{font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--slate2);
+ margin:17px 0 5px;padding-left:10px}
+.tog{display:flex;gap:8px;align-items:center;font-size:12.5px;color:var(--ink3);margin-top:18px;
+ padding:9px 10px;background:var(--paper3);border-radius:6px;cursor:pointer;border:1px solid var(--line2)}
+.tog input{accent-color:var(--verm)}
+.hero{border-bottom:1px solid var(--line);padding-bottom:32px;margin-bottom:38px}
+.kick{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--verm);font-weight:600;
+ margin-bottom:13px}
+.hero h1{font-size:clamp(31px,4.4vw,50px);margin-bottom:15px}
+.lede{font-size:19px;color:var(--ink2);max-width:66ch}
+.facts{display:flex;flex-wrap:wrap;gap:26px;margin-top:26px}
+.fact b{display:block;font-family:var(--serif);font-size:26px;line-height:1}
+.fact span{font-size:11.5px;color:var(--ink3)}
+section{scroll-margin-top:18px;margin-bottom:50px}
+h2{font-size:31px;margin-bottom:6px}h3{font-size:20px;margin:28px 0 9px}
+.sub{color:var(--ink3);font-size:15px;margin-bottom:20px;max-width:70ch}
+p{margin-bottom:14px;max-width:72ch}
+ul,ol{margin:0 0 15px 24px}li{margin-bottom:8px;max-width:70ch}
+figure{margin:20px 0 24px}
+figure img{width:100%;border:1px solid var(--line);border-radius:9px;display:block;background:var(--white)}
+figcaption{font-size:12.5px;color:var(--ink3);margin-top:9px;font-style:italic}
+.step{background:var(--white);border:1px solid var(--line);border-radius:11px;padding:26px 30px;
+ margin-bottom:20px}
+.shead{display:flex;gap:15px;align-items:flex-start;margin-bottom:4px}
+.sno{flex:none;width:34px;height:34px;border-radius:8px;background:var(--ink);color:var(--paper);
+ font-family:var(--serif);font-size:16px;display:grid;place-items:center;margin-top:3px}
+.shead h3{margin:0;font-size:21px;flex:1}
+.chk{display:flex;gap:7px;align-items:center;font-size:12px;color:var(--ink3);cursor:pointer;
+ flex:none;padding-top:7px;user-select:none}
+.chk input{accent-color:var(--sage);width:16px;height:16px}
+.meta{font-size:11.5px;color:var(--slate2);margin:0 0 15px 49px}
+.step.done{opacity:.6}.step.done .sno{background:var(--sage)}
+.plain{font-size:16.5px;color:var(--ink2)}
+.why{background:var(--paper3);border-radius:8px;padding:13px 17px;margin:14px 0;font-size:14.5px}
+.why b{color:var(--ink)}
+.code{position:relative;margin:14px 0}
+.code pre{background:#1B1F26;color:#E8E3DA;padding:15px 17px;border-radius:8px;overflow-x:auto;
+ font-family:var(--mono);font-size:12.6px;line-height:1.62}
+.cp{position:absolute;top:7px;right:8px;background:#2E353F;color:#C8CDD4;border:0;padding:4px 10px;
+ border-radius:5px;font-size:11px;cursor:pointer;font-family:var(--sans)}
+.cp:hover{background:#3C4552;color:#fff}.cp.ok{background:var(--sage);color:#fff}
+details{margin:14px 0;border-radius:0 7px 7px 0}
+details summary{cursor:pointer;font-weight:600;font-size:14.5px;list-style:none;display:flex;
+ gap:9px;align-items:baseline;padding:12px 17px}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:"▸";font-size:12px;transition:transform .18s}
+details[open] summary::before{transform:rotate(90deg)}
+details .body{padding:0 17px 15px 34px;font-size:14.5px}
+.trap{border-left:3px solid var(--verm);background:#FBF0EC}
+.trap summary{color:#A8321F}
+.tech{border-left:3px solid var(--slate2);background:var(--paper3)}
+.tech summary{color:var(--slate)}
+.note{border-left:3px solid var(--slate2);background:var(--paper3);padding:13px 17px;
+ border-radius:0 7px 7px 0;margin:15px 0;font-size:14.5px}
+.warn{border-left:3px solid var(--amber);background:#FDF6E9;padding:13px 17px;
+ border-radius:0 7px 7px 0;margin:15px 0;font-size:14.5px}
+.win{border-left:3px solid var(--sage);background:#F1F4EF;padding:13px 17px;
+ border-radius:0 7px 7px 0;margin:15px 0;font-size:14.5px}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14.2px}
+th{text-align:left;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);
+ border-bottom:1.5px solid var(--line);padding:9px 11px 9px 0}
+td{padding:10px 11px 10px 0;border-bottom:1px solid var(--line2);vertical-align:top}
+.dl{display:block;background:var(--ink);color:var(--paper);padding:18px 22px;border-radius:10px;
+ margin:18px 0;text-decoration:none}
+.dl:hover{text-decoration:none;background:#22272F}
+.dl b{display:block;font-family:var(--serif);font-size:20px;margin-bottom:3px;color:var(--paper)}
+.dl span{font-size:13.5px;color:#A8AEB6}
+.hideNonTrap .step > *:not(.trap):not(.shead):not(.meta){display:none}
+.hideNonTrap .nogo{display:none}
+footer{border-top:1px solid var(--line);padding-top:26px;margin-top:56px;font-size:13px;color:var(--ink3)}
+</style></head><body>
+<div class="shell">
+<aside class="side">
+ <div class="brand"><small>Guided walkthrough</small>Build a credit control desk on Fabric and Power Platform</div>
+ <div class="prog"><div class="progbar"><div class="progfill"></div></div>
+  <div class="progtxt">0 of 10 steps done</div></div>
+ <nav class="nav"><a href="#why">Why</a><a href="#what">What</a><a href="#code">Get the code</a><a href="#s1">1. Set up the workspace, the Variable Library and Git</a><a href="#s2">2. Generate the receivables and freeze the control totals</a><a href="#s3">3. Build Silver and Gold with Materialized Lake Views</a><a href="#s4">4. Score every customer and compute the expected credit loss</a><a href="#s5">5. Install the Dataverse side</a><a href="#s6">6. Carry Dataverse into the lake</a><a href="#s7">7. Put Gold scores back into Dataverse for the app</a><a href="#s8">8. Check the app and the approval flows</a><a href="#s9">9. Build the month-end snapshot, the Direct Lake model and the report</a><a href="#s10">10. Chain it in a pipeline with a verdict gate after every notebook</a><a href="#traps">Traps</a><a href="#not">Limits</a></nav>
+ <label class="tog"><input type="checkbox" id="trapOnly"> Show only the gotchas</label>
+</aside>
+<main class="main">
+
+<section id="top"><div class="hero">
+<h1>Build a credit control desk on Microsoft Fabric and Power Platform</h1>
+<p class="sub">Receivables land in a Lakehouse, Materialized Lake Views build exposure and ageing, an ML model and a
+points scorecard grade every customer, an MFRS 9 matrix sets the provision, and a canvas app with approval flows sends
+every decision back to the lake. Ten steps, roughly 13 hours, every figure read back against a value computed
+somewhere else.</p>
+</div></section>
+
+<section id="why"><h2>Why anyone builds this</h2>
+<p class="plain">A credit desk at a distributor answers the same questions every day: who is over their limit, who is
+slow to pay, how much provision do we need, and should we release this held order? Usually the numbers sit in an ERP
+export and a spreadsheet, and the decisions sit in email.</p>
+<p class="plain">This build puts the numbers and the decisions on one loop. The app shows the score next to the
+request, the matrix decides who approves, and the decision comes back into the data the next report reads.</p>
+</section>
+
+<section id="what"><h2>What you are building</h2>
+<table><thead><tr><th>Layer</th><th>What it is</th></tr></thead><tbody>
+<tr><td><b>Generator</b></td><td>One seeded Python module: 600 customers, about 90,000 invoices, 263,402 rows in 12 tables</td></tr>
+<tr><td><b>Materialized Lake Views</b></td><td>8 Silver and Gold views; 30 checks, 0 failed</td></tr>
+<tr><td><b>Scoring and ECL</b></td><td>A registered ML model, a points scorecard (the champion), and a provision of RM 546,880.42</td></tr>
+<tr><td><b>Dataverse</b></td><td>Five tables: requests, hold releases, the authority tiers, the decision log, and a Gold profile cache</td></tr>
+<tr><td><b>Copy jobs</b></td><td>Dataverse into the lake hourly; Gold back into Dataverse on demand</td></tr>
+<tr><td><b>Canvas app and flows</b></td><td>Today, Customers and Requests screens; two approval flows routed by the matrix</td></tr>
+<tr><td><b>Direct Lake model and report</b></td><td>14 tables, 39 measures, 6 pages</td></tr>
+<tr><td><b>Pipeline</b></td><td>13 activities, a verdict gate after each notebook</td></tr>
+</tbody></table>
+<div class="note"><b>All data is synthetic</b>, generated from a fixed seed. Rimbun Niaga Distribution Sdn Bhd is fictional, and no figure represents a real company or person. The credit report score is a generic, unbranded score.</div>
+</section>
+
+<section id="code"><h2>Get the code</h2>
+<p class="sub">Everything the steps below tell you to run is in one public repository, MIT licensed, no sign-up.
+<b>Get it before step 1</b>: the Variable Library is the first thing you deploy.</p>
+<div class="win"><b><a href="https://github.com/BIVenture2025/rimbun-niaga-credit-desk-fabric">github.com/BIVenture2025/rimbun-niaga-credit-desk-fabric</a></b> &nbsp;&middot;&nbsp; <a href="https://github.com/BIVenture2025/rimbun-niaga-credit-desk-fabric/archive/refs/heads/main.zip"><b>Download the repository as a ZIP</b></a> &nbsp;&middot;&nbsp; or clone it:</div>
+<div class="code"><pre>git clone https://github.com/BIVenture2025/rimbun-niaga-credit-desk-fabric.git
+cd rimbun-niaga-credit-desk-fabric</pre></div>
+<table><thead><tr><th style="width:22%">Folder</th><th>What is in it</th></tr></thead><tbody>
+<tr><td><code>generator/</code></td><td>The data generator, the Silver/Gold SQL, scoring and ECL, and the month-end snapshots</td></tr>
+<tr><td><code>notebooks/</code></td><td>The Fabric notebooks, the scripts that build them, and offline replays of each</td></tr>
+<tr><td><code>platform/</code></td><td>Variable Library and the refresh pipeline</td></tr>
+<tr><td><code>dataverse/</code></td><td>The seeded request and decision history</td></tr>
+<tr><td><code>app/</code></td><td>Canvas app source, flows, and the solution package</td></tr>
+<tr><td><code>model/</code> &middot; <code>report/</code></td><td>The Direct Lake model (TMDL) and the six-page PBIR report, with their generators</td></tr>
+<tr><td><code>run/</code></td><td>PowerShell scripts that upload a module, run a notebook and save its verdict</td></tr>
+<tr><td><code>docs/</code></td><td>Contract, specs, control totals, results, closure, install notes, and this guide</td></tr>
+</tbody></table>
+<div class="note"><b>If you only open three things first:</b> <code>docs/SCORING_ECL_SPEC.md</code> is how the grades and
+the provision are worked out, <code>docs/INSTALL_NOTES.md</code> is what a solution does not carry, and
+<code>docs/CONTROL_TOTALS.md</code> is what every later figure reconciles to.</div>
+</section>
+
+<h2 id="build">The build</h2>
+
+<section id="s1"><div class="step">
+ <div class="shead"><div class="sno">1</div><h3>Set up the workspace, the Variable Library and Git</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 45 min</p>
+ 
+<p class="plain">Everything on the Fabric side lives in one <b>workspace</b> on a <b>capacity</b>. Three things go in
+before any data: the Variable Library, the Git connection and the Lakehouse.</p>
+<ol>
+<li>Sign in at <b>app.fabric.microsoft.com</b> with a work or school account and create a workspace on your capacity.</li>
+<li>Deploy <code>platform/VL_RimbunCredit.VariableLibrary</code> <b>first</b>. The as-of date (31 Oct 2026), the seed and
+the history window are read from it, never typed into code.</li>
+<li>Connect the workspace to Git (Workspace settings &rarr; Git integration) before the second item, and commit one item
+at a time.</li>
+<li>Create a Lakehouse called <code>LH_RimbunCredit</code> with <b>schemas enabled</b>. The tables land in <code>erp</code>,
+<code>silver</code>, <code>gold</code>, <code>audit</code> and <code>dv</code>.</li>
+</ol>
+<div class="why"><b>Why one item per commit:</b> the Source control pane re-renders while you click, and one mis-click in this build committed a stray experiment. Typing the message first, then ticking one item, keeps the history readable (docs/GIT_SETUP.md).</div>
+</div></section>
+<section id="s2"><div class="step">
+ <div class="shead"><div class="sno">2</div><h3>Generate the receivables and freeze the control totals</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 1 h</p>
+ 
+<p class="plain">The source is a made-up ERP: 600 trade customers, invoices, receipts and how they were applied, credit
+notes, disputes, write-offs, order holds, credit limit history and a generic credit report score. One seeded Python
+module writes all of it.</p>
+<ol>
+<li>Upload <code>generator/rimbun_gen.py</code> to the Lakehouse at <code>Files/generator/</code>.</li>
+<li>Run <code>notebooks/NB_RimbunCredit_Generate.ipynb</code>. It checks the module's SHA256 before importing it and
+ends with a JSON verdict.</li>
+<li>Count every table and compare with <code>docs/CONTROL_TOTALS.md</code>: <b>263,402 rows in 12 tables</b>, 90,357
+invoices.</li>
+</ol>
+<div class="win">The tenant's table hash equalled the offline run's, so the lake holds exactly what the generator wrote (docs/CONTROL_TOTALS.md).</div><details class="trap"><summary>A notebook that fails in a cell tells you nothing</summary><div class="body">Fabric reports a failed cell only as <code>System_Cancelled_Session_Statements_Failed</code>. Every notebook here catches its own exception and exits with a JSON verdict (<code>GENERATE_OK</code>, <code>BUILD_FAILED</code> and so on), so the run itself says what went wrong.</div></details><details class="trap"><summary>A rule that mixes generated data with a run parameter belongs in the offline test</summary><div class="body">The first tenant run found a dispute dated after the as-of date. Any check like "no event after the as-of date" is asserted offline, over every date column, before the first tenant run (<code>notebooks/harness/harness_nb_generate.py</code>).</div></details>
+</div></section>
+<section id="s3"><div class="step">
+ <div class="shead"><div class="sno">3</div><h3>Build Silver and Gold with Materialized Lake Views</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 1.5 h</p>
+ 
+<p class="plain">Silver cleans: duplicate receipts out, unapplied cash kept apart, invoices missing a due date flagged.
+Gold answers the desk's questions: each customer's exposure, ageing and payment behaviour. All of it is SQL in
+<code>generator/rimbun_silver_gold.py</code>, run as eight <b>Materialized Lake Views</b> (tables Fabric keeps up to
+date from a query) by <code>notebooks/NB_RimbunCredit_SilverGold.ipynb</code>.</p>
+<div class="win">All 8 views were created on the first attempt; 30 checks ran (21 pass, 9 information, 0 fail), and net open receivables in Gold, <b>RM 156,034,718.22</b>, equal the source to the cent (docs/SILVER_GOLD_SPEC.md).</div><div class="note"><b>State the basis of every total.</b> Gross open receivables (open invoices only) are RM 156,054,109.49; net of the 14 overpaid invoices they are RM 156,034,718.22. Both are right; they answer different questions.</div><details class="trap"><summary>The SQL endpoint shows old data after a rebuild</summary><div class="body">After a view is rebuilt, or a table overwritten, the Lakehouse SQL endpoint can answer from stale metadata (&quot;underlying location does not exist&quot;, or old row counts). Spark and Direct Lake read the Delta files directly and are fine. Sync the endpoint's metadata before calling data missing.</div></details>
+</div></section>
+<section id="s4"><div class="step">
+ <div class="shead"><div class="sno">4</div><h3>Score every customer and compute the expected credit loss</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 2 h</p>
+ 
+<p class="plain">Two ways to grade a customer, run side by side: a gradient-boosted <b>ML model</b> registered in
+Fabric, and a <b>points scorecard</b> a credit manager can explain line by line. The question both answer: will this
+customer reach a material 60+ days past due within six months? Then an <b>MFRS 9</b> provision matrix (the simplified
+approach) turns roll rates by segment and ageing band into a provision.</p>
+<ol>
+<li>Read <code>docs/SCORING_ECL_SPEC.md</code> first: every threshold and kill criterion was fixed before the first run.</li>
+<li>Upload <code>generator/rimbun_score_ecl.py</code> and run <code>notebooks/NB_RimbunCredit_ScoreECL.ipynb</code>.</li>
+<li>Read back the grades, the AUCs and the provision by query.</li>
+</ol>
+<div class="win">Out-of-time test AUC <b>0.709</b> (ML) against <b>0.692</b> (scorecard): the gap is under 0.02, so the explainable scorecard is the champion. Provision <b>RM 546,880.42</b>, 0.35% of gross open receivables, equal three ways by query.</div><div class="why"><b>Why the label is 60+, not 90+:</b> a frozen gate required a training bad rate of at least 2%. At 90+ it was 1.34%, so the gate stopped the run before any model was trained, and the label moved to 60+ by a measured choice.</div><details class="trap"><summary>Fabric autologging creates an experiment you did not ask for</summary><div class="body">Fitting scikit-learn before <code>mlflow.set_experiment</code> made Fabric create an experiment named after the notebook. Call <code>mlflow.autolog(disable=True)</code> first; the registered model still lands where you point it.</div></details><details class="trap"><summary>A hash across two Python environments can differ when the data does not</summary><div class="body">A replay hash built from pandas text output differed between the offline pandas and Fabric's. Compare values (counts, sums, a few rows) rather than text, and put the comparison inside the notebook so it can stop the run.</div></details>
+</div></section>
+<section id="s5"><div class="step">
+ <div class="shead"><div class="sno">5</div><h3>Install the Dataverse side: tables, app and flows</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 1.5 h</p>
+ 
+<p class="plain"><b>Dataverse</b> is Power Platform's database. The solution in <code>app/package/</code> carries five
+tables (credit request, hold release, authority tier, decision log, customer profile cache), the canvas app and the two
+approval flows.</p>
+<ol>
+<li>Import the solution into your environment (Solutions &rarr; Import).</li>
+<li>Follow <code>docs/INSTALL_NOTES.md</code>: create the two connections, bind them, <b>seed the four tier rows</b>,
+turn both flows on.</li>
+<li>Seed the history from <code>dataverse/dv_seed_payload.json</code>: 150 requests and 150 decisions.</li>
+</ol>
+<div class="warn"><b>A solution installs every table empty.</b> In the clean-environment test the first request failed at <code>add(Null)</code> because the authority tier table had no rows. Seed it before the first request.</div><details class="trap"><summary>Flows arrive as Draft with no connections</summary><div class="body">The import finished with no failures and both flows were off. Connections made from the Connections page stayed unauthenticated; the flow designer's <b>Change connection &rarr; Add new</b> worked.</div></details><div class="note"><b>Licences:</b> this was built under the owner's own licences on a Fabric trial. A production desk needs Power Apps premium licences for every user.</div>
+</div></section>
+<section id="s6"><div class="step">
+ <div class="shead"><div class="sno">6</div><h3>Carry Dataverse into the lake</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 45 min</p>
+ 
+<p class="plain">The report needs every request and decision. Fabric's <b>Link to Fabric</b> would do this without a
+copy, but on this tenant its licence check refused the link twice. A <b>Copy job</b> does it instead: Dataverse to
+<code>LH_RimbunCredit</code>, schema <code>dv</code>, every hour.</p>
+<div class="win">A marked change arrived in the lake within 56 minutes; the worst case is about 62 (the hour plus start lag and run time). docs/COMPONENT10_COPYJOB.md</div><details class="trap"><summary>New tables are invisible to the SQL endpoint for minutes</summary><div class="body">The Copy job landed four new tables and the SQL endpoint did not list them for more than ten minutes, until <b>Sync metadata</b>.</div></details>
+</div></section>
+<section id="s7"><div class="step">
+ <div class="shead"><div class="sno">7</div><h3>Put Gold scores back into Dataverse for the app</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 1 h</p>
+ 
+<p class="plain">The app shows each customer's grade, PD and exposure beside the request, so Gold has to reach
+Dataverse. <code>notebooks/NB_RimbunCredit_CacheFeed.content.py</code> writes a table with Dataverse's own
+column names and a GUID key, and a second Copy job upserts it into the profile cache table.</p>
+<div class="win">600 rows read back from Dataverse with net exposure RM 135,771,393.24, equal to Gold; about 72 s of machine time end to end. docs/COMPONENT11_PROFILE_CACHE.md</div><details class="trap"><summary>The tenant's data-loss policy blocked the obvious route</summary><div class="body">A flow reading the Fabric SQL endpoint needs the SQL Server connector, which the tenant's DLP policy refused at connection time. Check the policy before designing the route.</div></details><details class="trap"><summary>A Copy job into Dataverse cannot map a query source</summary><div class="body">With a T-SQL query as source the mapping editor matched nothing. A Lakehouse <b>table</b> source with a GUID primary key upserted all 600 rows; an alternate key alone was not enough for Upsert.</div></details>
+</div></section>
+<section id="s8"><div class="step">
+ <div class="shead"><div class="sno">8</div><h3>Check the app and the approval flows</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 2 h</p>
+ 
+<p class="plain">The app is generated from <code>app/gen_app.py</code> (screens as pa.yaml) and the flows from
+<code>app/gen_flows.py</code>. A rep raises a limit request or a hold release; the flow finds the tier from the
+authority matrix (a grade D or E customer goes one tier up, any 90+ balance means at least T2), sends an approval, and
+writes the decision log.</p>
+<div class="win">One credit request routed to T2 Credit Manager in 9 s, was approved and wrote its log row; a hold release for a grade A customer with a small 90+ balance routed to T2 through the 90+ rule (docs/results/S8, S9).</div><details class="trap"><summary>A canvas app published from Studio is not in the solution</summary><div class="body">Add it through Add existing &rarr; App &rarr; Canvas app &rarr; <b>Outside Dataverse</b>. And read the text inside the exported <code>.msapp</code>: one export carried an older version of the app than the one published.</div></details><details class="trap"><summary>Reusing a control name can render the new control blank</summary><div class="body">After a redesign, five labels and a block under the header rendered blank until they got names the saved app had never held. Compare new names with the old export before compiling.</div></details>
+</div></section>
+<section id="s9"><div class="step">
+ <div class="shead"><div class="sno">9</div><h3>Build the month-end snapshot, the Direct Lake model and the report</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 2 h</p>
+ 
+<p class="plain">The snapshot notebook adds a month-end exposure table (600 customers &times; 34 month-ends), the desk's
+decisions with Malaysia-time dates, and small dimension tables. The <b>Direct Lake</b> model
+(<code>model/</code>) reads those Delta tables in place: 14 tables, 39 measures, with titles written by DAX so no
+number is typed into the report. The six-page report is generated by <code>report/build_report.py</code>.</p>
+<figure><img src="img/rimbun/home.png" alt="Home: net exposure, customers over their limit, 90+ balance and the provision, each with its own sentence." loading="lazy"><figcaption>Home: net exposure, customers over their limit, 90+ balance and the provision, each with its own sentence.</figcaption></figure><figure><img src="img/rimbun/exposure.png" alt="Exposure: gross and net receivables, ageing bands, credit groups over their group limit, and the customers over their own limit." loading="lazy"><figcaption>Exposure: gross and net receivables, ageing bands, credit groups over their group limit, and the customers over their own limit.</figcaption></figure><figure><img src="img/rimbun/risk-and-scoring.png" alt="Risk and scoring: the grade mix, test bad rate by grade, and the ML model against the scorecard." loading="lazy"><figcaption>Risk and scoring: the grade mix, test bad rate by grade, and the ML model against the scorecard.</figcaption></figure><figure><img src="img/rimbun/expected-credit-loss.png" alt="Expected credit loss: loss rate by ageing band and segment, the provision by segment, and the overlay table." loading="lazy"><figcaption>Expected credit loss: loss rate by ageing band and segment, the provision by segment, and the overlay table.</figcaption></figure><figure><img src="img/rimbun/desk-workflow.png" alt="Desk workflow: requests, approval rate and days to decide, including live requests from the app." loading="lazy"><figcaption>Desk workflow: requests, approval rate and days to decide, including live requests from the app.</figcaption></figure><figure><img src="img/rimbun/report-guide.png" alt="Report guide: what each page answers and where every figure comes from." loading="lazy"><figcaption>Report guide: what each page answers and where every figure comes from.</figcaption></figure><details class="trap"><summary>Text colours the service ignores, passed by three validators</summary><div class="body"><code>textStyle.color</code> must be a plain <code>"#hex"</code> string. The object form passed the local linter, a report-rules check and the official PBIR validator, and rendered in the default colour. An axis block with a <code>selector</code> ignored <code>show: false</code>. Only a picture of the page showed either.</div></details><details class="trap"><summary>Desktop does not scale by commas</summary><div class="body"><code>"RM "#,0,,.0"m"</code> showed RM 156.1m in the service and "RM 156,054,109.5,,m" in Desktop. Money measures carry a plain <code>"RM "#,0</code>; millions come from the visuals' display units.</div></details><details class="trap"><summary>Fix the model files, not the live model</summary><div class="body">Two fixes made only to the deployed model were gone the next day. Every change goes into the generator and TMDL and is redeployed, then read back.</div></details>
+</div></section>
+<section id="s10"><div class="step">
+ <div class="shead"><div class="sno">10</div><h3>Chain it in a pipeline with a verdict gate after every notebook</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 1 h</p>
+ 
+<p class="plain"><code>platform/pipeline/</code> holds a 13-activity pipeline: Dataverse copy, Silver/Gold, scoring and
+ECL, snapshots, cache feed, copy back to Dataverse, model refresh. After each notebook an <b>If</b> reads its JSON
+verdict and fails the run unless it ends in <code>_OK</code>.</p>
+<div class="win">A forced block at Silver/Gold made the run <b>fail</b> with its own error code and nothing downstream ran; the full run <b>completed</b> in 10 min 23 s, 13 of 13, and every headline figure was unchanged to the cent.</div><details class="trap"><summary>The Copy job and model refresh activities need connections made in the portal</summary><div class="body"><code>InvokeCopyJob</code> failed with &quot;connection cannot be found&quot;. Two thin notebooks call the job and refresh APIs with the notebook's own identity instead, which needs no connection.</div></details>
+</div></section>
+
+<section id="traps"><h2>Every trap, in one table</h2>
+<table><thead><tr><th>Trap</th><th>What happens</th></tr></thead><tbody><tr><td><b>Link to Fabric refused (licence check)</b></td><td>Use a scheduled Copy job from the Dataverse connector.</td></tr><tr><td><b>Failed notebook cell</b></td><td>Reports only System_Cancelled_Session_Statements_Failed. Exit with a verdict JSON.</td></tr><tr><td><b>Rule mixing data with a run parameter</b></td><td>Assert it offline before the first tenant run.</td></tr><tr><td><b>SQL endpoint after a rebuild or overwrite</b></td><td>Serves stale metadata. Sync before calling data missing.</td></tr><tr><td><b>New tables from a Copy job</b></td><td>Invisible to the SQL endpoint for 10+ minutes until Sync metadata.</td></tr><tr><td><b>Fabric autologging</b></td><td>Creates an extra experiment. Disable autolog before fitting.</td></tr><tr><td><b>Hash across environments</b></td><td>Text differs between pandas versions. Compare values.</td></tr><tr><td><b>Base-rate gate</b></td><td>Fired at 90+ (1.34%) before training. Moved the label, not the gate.</td></tr><tr><td><b>Tenant DLP policy</b></td><td>Blocked the SQL Server connector. Check it before designing a flow route.</td></tr><tr><td><b>Copy job into Dataverse from a query</b></td><td>Cannot be mapped. Use a table with a GUID primary key.</td></tr><tr><td><b>App published from Studio</b></td><td>Not in the solution. Add it via Outside Dataverse.</td></tr><tr><td><b>Solution export</b></td><td>Once carried an older app. Read the text inside the .msapp.</td></tr><tr><td><b>Flows after import</b></td><td>Draft with empty connections. Designer: Add new.</td></tr><tr><td><b>Configuration tables after import</b></td><td>Empty. Seed the tier rows.</td></tr><tr><td><b>Reused control names after a redesign</b></td><td>Controls render blank. Rename.</td></tr><tr><td><b>textStyle.color as an object</b></td><td>Ignored by the service; every validator passed it. Plain hex string.</td></tr><tr><td><b>selector on an axis block</b></td><td>show: false does not apply. No selector.</td></tr><tr><td><b>Dropdown slicer under 48 px, duplicate filter names</b></td><td>Only the official PBIR validator catches them. Make it a deploy stop.</td></tr><tr><td><b>Scaling commas in a format string</b></td><td>Desktop ignores them. Plain mask plus display units.</td></tr><tr><td><b>InvokeCopyJob / refresh activity</b></td><td>Need portal connections. Call the APIs from a notebook.</td></tr><tr><td><b>Live-only model fix</b></td><td>Was gone the next day. Fix files, redeploy, read back.</td></tr><tr><td><b>Blank member in slicers</b></td><td>Appears with no orphan key. Filter it out; cause not established.</td></tr></tbody></table>
+</section>
+
+<section id="not"><h2>What this build does not do</h2>
+<p class="plain">Stated plainly, because a portfolio piece that hides its gaps is worth less than one that names them.</p>
+<ul>
+<li><b>No from-scratch deploy.</b> Every item is in Git, but the estate was never redeployed into an empty workspace.</li>
+<li><b>Tiers T3 and T4 were not routed by a flow.</b> Only T1 and T2 were decided end to end, and the approver was always
+the builder's own mailbox.</li>
+<li><b>No Link to Fabric and no virtual table.</b> Both legs of the round trip are Copy jobs.</li>
+<li><b>A blank member</b> shows on the model's dimension tables with no orphan key behind it; the report filters it out.</li>
+<li><b>No row-level security, no scheduled pipeline.</b> The pipeline runs on demand.</li>
+</ul>
+</section>
+
+<footer>
+<p class="plain">Built by Yeong Wai Son, Kuala Lumpur. Source, specs and the full closure pack:
+<a href="https://github.com/BIVenture2025/rimbun-niaga-credit-desk-fabric">github.com/BIVenture2025/rimbun-niaga-credit-desk-fabric</a>. Progress ticks are in-memory only and
+reset when you reload.</p>
+</footer>
+</main></div>
+<script>
+const boxes=[...document.querySelectorAll('.chk input')];
+const fill=document.querySelector('.progfill'),ptxt=document.querySelector('.progtxt');
+function upd(){const n=boxes.filter(b=>b.checked).length;
+ fill.style.width=(n/boxes.length*100)+'%';ptxt.textContent=n+' of '+boxes.length+' steps done';}
+boxes.forEach(b=>b.addEventListener('change',()=>{b.closest('.step').classList.toggle('done',b.checked);upd();}));
+upd();
+document.querySelectorAll('.code').forEach(c=>{const b=document.createElement('button');
+ b.className='cp';b.textContent='Copy';
+ b.onclick=()=>navigator.clipboard.writeText(c.querySelector('pre').innerText).then(()=>{
+  b.textContent='Copied';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1400)});
+ c.appendChild(b);});
+const links=[...document.querySelectorAll('.nav a')];
+const secs=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)
+ links.forEach(l=>l.classList.toggle('on',l.getAttribute('href')==='#'+e.target.id))}),
+ {rootMargin:'-12% 0px -78% 0px'}).observe&&secs.forEach(s=>
+ new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)
+ links.forEach(l=>l.classList.toggle('on',l.getAttribute('href')==='#'+e.target.id))}),
+ {rootMargin:'-12% 0px -78% 0px'}).observe(s));
+document.getElementById('trapOnly').addEventListener('change',e=>
+ document.body.classList.toggle('hideNonTrap',e.target.checked));
+</script></body></html>

@@ -764,6 +764,13 @@ function posterInner(p){
         '<span class="arch-ov">Open the rebuild guide ↗</span>'+
       '</a>';
   }
+  if(p.kind === "report"){
+    return '<a class="poster" style="display:block;text-decoration:none" href="'+esc(p.guide)+'" target="_blank" rel="noopener" '+
+        'aria-label="Open the rebuild guide for '+esc(p.title)+' — opens in a new tab">'+
+        (p.image ? '<img src="'+esc(p.image)+'" alt="" loading="lazy">' : '')+
+        '<span class="poster-no">'+esc(p.no)+'</span>'+
+        '<span class="poster-play">Open the rebuild guide ↗</span></a>';
+  }
   const label = p.kind === "video" ? "▶ &nbsp;Watch the demo" : "▶ &nbsp;Load live report";
   const aria  = p.kind === "video" ? "Play the demo video for "+p.title : "Load the live report for "+p.title;
   return '<button class="poster" data-embed="'+esc(p.id)+'" aria-label="'+esc(aria)+'">'+

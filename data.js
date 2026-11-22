@@ -741,6 +741,28 @@ const CV = {
       ],
       note: "Power BI Dataviz World Champs 2027 \u2014 Round 1, Pillow & Key Group investment challenge. Provided dataset only.",
       url: "https://app.powerbi.com/view?r=eyJrIjoiODJhM2JhNzItOTJlZS00NGE2LTljY2UtNWIxZjk3YTZkZjVjIiwidCI6IjQ5MDk0YTAyLTRjNzktNGEyYy1iZDdmLThlZTBmMjgzN2Y0MSJ9"
+    },
+    {
+      id: "teduh-opex-pack",
+      category: "Analytic Dashboard",
+      domain: "FP&A & Cost Control",
+      no: "22",
+      kind: "report",
+      title: "Opex Variance and Forecast Pack \u2014 Teduh Samudera Energy",
+      meta: "4 pages \u00b7 import model \u00b7 backtested forecast",
+      image: "img/teduh-opex.jpg",
+      desc: "A finance leader needs three answers from the cost base: are we over budget, which cost centre explains it, and where does next year land. This pack gives them in four pages whose titles are the findings. Opex runs 3.0% over budget year to date, and almost all of the gap sits in one cost centre: unplanned maintenance at the Teduh Selatan field. The forecast is tested before it is believed: a damped-trend model was scored against a plain seasonal baseline on ten held-out months, the model lost, and the baseline ships. The range, and the limits of that range, are published beside the number.",
+      use: "Finance and asset teams that want a variance pack they can rebuild and audit, and anyone weighing a statistical forecast against a simple baseline before putting it in front of a CFO.",
+      tags: ["Power BI", "PBIP", "DAX", "DAX User-Defined Functions", "Forecasting", "Backtesting", "Variance Analysis", "FP&A", "Oil & Gas", "Python"],
+      signals: [
+        { v: "RM 41.5 m", k: "Opex over budget year to date (3.0%); RM 40.1 m of it in one cost centre" },
+        { v: "RM 1,916 m", k: "FY2027 forecast by asset and cost type, with a P10 to P90 range" },
+        { v: "16 / 16", k: "Relationships with no orphan keys; every page captured in Desktop" }
+      ],
+      guide: "https://biventure2025.github.io/teduh-samudera-opex-pack-pbi/docs/guide.html",
+      guideTxt: "Rebuild guide \u2197",
+      repo: "https://github.com/BIVenture2025/teduh-samudera-opex-pack-pbi",
+      note: "Synthetic data, fixed seed, January 2024 to October 2026; Teduh Samudera Energy is fictional and no figure represents a real company or cost. Published as source files, not a live report: the generator, the forecast and backtest, the model, the report and a rebuild guide, with the limits named: the forecast range covered 5 of 10 test months, and the statistical model did not beat the seasonal baseline."
     }
   ],
 

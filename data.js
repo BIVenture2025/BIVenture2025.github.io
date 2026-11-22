@@ -763,6 +763,28 @@ const CV = {
       guideTxt: "Rebuild guide \u2197",
       repo: "https://github.com/BIVenture2025/teduh-samudera-opex-pack-pbi",
       note: "Synthetic data, fixed seed, January 2024 to October 2026; Teduh Samudera Energy is fictional and no figure represents a real company or cost. Published as source files, not a live report: the generator, the forecast and backtest, the model, the report and a rebuild guide, with the limits named: the forecast range covered 5 of 10 test months, and the statistical model did not beat the seasonal baseline."
+    },
+    {
+      id: "rimbun-credit-terms-app",
+      category: "AI & Automation",
+      domain: "Credit Control",
+      no: "23",
+      kind: "report",
+      title: "Credit Term Requests \u2014 Rimbun Niaga",
+      meta: "Power Apps \u00b7 Power Automate \u00b7 SharePoint \u00b7 Approvals",
+      image: "img/rimbun-credit-terms.jpg",
+      desc: "Sales asks for a longer credit term for one customer, and someone has to decide. This app works out who: the credit controller for a small, clean request, the finance manager when the new term is far above the customer's standard term, the order pushes exposure over the credit limit or RM 250,000, anything is 60 days overdue, or the customer is grade D or E. The requester sees who will decide, and why, before pressing Send. The decision is made in Approvals, written back to the request and the customer with a review date, and the requester follows it on a phone. The rule is written three times, as a Python oracle, in the app and in the flow, and all three agree on 18 test cases.",
+      use: "Finance and credit teams that want a light approval workflow on Microsoft 365 they can install and change, and anyone who needs an app's promise and a flow's decision to provably match.",
+      tags: ["Power Apps", "Power Automate", "SharePoint", "Approvals", "Power Fx", "Canvas Apps", "Credit Control", "Python"],
+      signals: [
+        { v: "18 / 18", k: "Rule test cases on which the oracle, the app and the flow agree" },
+        { v: "9 runs", k: "Live flow runs on the sample, each routed as planned, approve and reject written back" },
+        { v: "0 errors", k: "Cross-tenant check on the solution file you import" }
+      ],
+      guide: "https://biventure2025.github.io/rimbun-niaga-credit-terms-app/docs/guide.html",
+      guideTxt: "Rebuild guide \u2197",
+      repo: "https://github.com/BIVenture2025/rimbun-niaga-credit-terms-app",
+      note: "Synthetic data from a seeded generator; Rimbun Niaga is fictional. Published as an installable solution and source, not a live app: lists, app, flow, the rule oracle and a rebuild guide, with the limits named: self-approval is not blocked, counts are capped at 500 rows, and the install was not rehearsed in a second environment."
     }
   ],
 

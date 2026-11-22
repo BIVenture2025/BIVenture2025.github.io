@@ -1,0 +1,266 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rimbun Niaga credit term requests: rebuild guide</title>
+<meta name="description" content="Rebuild a Power Apps and Power Automate credit term request app with SharePoint lists and Approvals.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--paper:#EFEAE0;--paper2:#E5DED1;--paper3:#F7F4EE;--white:#FCFAF7;
+ --ink:#16191E;--ink2:#2A3038;--ink3:#5C6470;--slate:#5C6E7C;--slate2:#8A9AA6;
+ --verm:#D8452C;--amber:#E5A94E;--sage:#7C8B7A;--line:rgba(22,25,30,.13);
+ --line2:rgba(22,25,30,.07);--serif:"Fraunces",Palatino,Georgia,serif;
+ --sans:"Inter","Segoe UI",-apple-system,Helvetica,Arial,sans-serif;
+ --mono:"SFMono-Regular",Consolas,Menlo,monospace}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16.5px;
+ line-height:1.68;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--serif);font-weight:400;letter-spacing:-.02em;line-height:1.14}
+a{color:var(--verm);text-decoration:none}a:hover{text-decoration:underline}
+code{font-family:var(--mono);font-size:.86em;background:var(--paper2);padding:.12em .38em;border-radius:3px}
+.shell{display:grid;grid-template-columns:268px 1fr;max-width:1340px;margin:0 auto}
+.side{position:sticky;top:0;height:100vh;overflow-y:auto;padding:30px 20px 40px;
+ border-right:1px solid var(--line)}
+.main{padding:44px 56px 120px;min-width:0}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.side{position:static;height:auto;
+ border-right:0;border-bottom:1px solid var(--line)}.main{padding:26px 18px 70px}}
+.brand{font-family:var(--serif);font-size:19px;line-height:1.2}
+.brand small{display:block;font-family:var(--sans);font-size:10.5px;letter-spacing:.17em;
+ text-transform:uppercase;color:var(--slate2);margin-bottom:7px}
+.prog{margin:18px 0 20px}
+.progbar{height:5px;background:var(--paper2);border-radius:3px;overflow:hidden}
+.progfill{height:100%;width:0;background:var(--verm);transition:width .35s}
+.progtxt{font-size:11.5px;color:var(--ink3);margin-top:7px}
+.nav a{display:block;padding:6px 10px;border-radius:5px;font-size:13.5px;color:var(--ink2);
+ border-left:2px solid transparent}
+.nav a:hover{background:var(--paper3);text-decoration:none}
+.nav a.on{background:var(--white);border-left-color:var(--verm);font-weight:600;color:var(--ink)}
+.nav .grp{font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--slate2);
+ margin:17px 0 5px;padding-left:10px}
+.tog{display:flex;gap:8px;align-items:center;font-size:12.5px;color:var(--ink3);margin-top:18px;
+ padding:9px 10px;background:var(--paper3);border-radius:6px;cursor:pointer;border:1px solid var(--line2)}
+.tog input{accent-color:var(--verm)}
+.hero{border-bottom:1px solid var(--line);padding-bottom:32px;margin-bottom:38px}
+.kick{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--verm);font-weight:600;
+ margin-bottom:13px}
+.hero h1{font-size:clamp(31px,4.4vw,50px);margin-bottom:15px}
+.lede{font-size:19px;color:var(--ink2);max-width:66ch}
+.facts{display:flex;flex-wrap:wrap;gap:26px;margin-top:26px}
+.fact b{display:block;font-family:var(--serif);font-size:26px;line-height:1}
+.fact span{font-size:11.5px;color:var(--ink3)}
+section{scroll-margin-top:18px;margin-bottom:50px}
+h2{font-size:31px;margin-bottom:6px}h3{font-size:20px;margin:28px 0 9px}
+.sub{color:var(--ink3);font-size:15px;margin-bottom:20px;max-width:70ch}
+p{margin-bottom:14px;max-width:72ch}
+ul,ol{margin:0 0 15px 24px}li{margin-bottom:8px;max-width:70ch}
+figure{margin:20px 0 24px}
+figure img{width:100%;border:1px solid var(--line);border-radius:9px;display:block;background:var(--white)}
+figcaption{font-size:12.5px;color:var(--ink3);margin-top:9px;font-style:italic}
+.step{background:var(--white);border:1px solid var(--line);border-radius:11px;padding:26px 30px;
+ margin-bottom:20px}
+.shead{display:flex;gap:15px;align-items:flex-start;margin-bottom:4px}
+.sno{flex:none;width:34px;height:34px;border-radius:8px;background:var(--ink);color:var(--paper);
+ font-family:var(--serif);font-size:16px;display:grid;place-items:center;margin-top:3px}
+.shead h3{margin:0;font-size:21px;flex:1}
+.chk{display:flex;gap:7px;align-items:center;font-size:12px;color:var(--ink3);cursor:pointer;
+ flex:none;padding-top:7px;user-select:none}
+.chk input{accent-color:var(--sage);width:16px;height:16px}
+.meta{font-size:11.5px;color:var(--slate2);margin:0 0 15px 49px}
+.step.done{opacity:.6}.step.done .sno{background:var(--sage)}
+.plain{font-size:16.5px;color:var(--ink2)}
+.why{background:var(--paper3);border-radius:8px;padding:13px 17px;margin:14px 0;font-size:14.5px}
+.why b{color:var(--ink)}
+.code{position:relative;margin:14px 0}
+.code pre{background:#1B1F26;color:#E8E3DA;padding:15px 17px;border-radius:8px;overflow-x:auto;
+ font-family:var(--mono);font-size:12.6px;line-height:1.62}
+.cp{position:absolute;top:7px;right:8px;background:#2E353F;color:#C8CDD4;border:0;padding:4px 10px;
+ border-radius:5px;font-size:11px;cursor:pointer;font-family:var(--sans)}
+.cp:hover{background:#3C4552;color:#fff}.cp.ok{background:var(--sage);color:#fff}
+details{margin:14px 0;border-radius:0 7px 7px 0}
+details summary{cursor:pointer;font-weight:600;font-size:14.5px;list-style:none;display:flex;
+ gap:9px;align-items:baseline;padding:12px 17px}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:"▸";font-size:12px;transition:transform .18s}
+details[open] summary::before{transform:rotate(90deg)}
+details .body{padding:0 17px 15px 34px;font-size:14.5px}
+.trap{border-left:3px solid var(--verm);background:#FBF0EC}
+.trap summary{color:#A8321F}
+.tech{border-left:3px solid var(--slate2);background:var(--paper3)}
+.tech summary{color:var(--slate)}
+.note{border-left:3px solid var(--slate2);background:var(--paper3);padding:13px 17px;
+ border-radius:0 7px 7px 0;margin:15px 0;font-size:14.5px}
+.warn{border-left:3px solid var(--amber);background:#FDF6E9;padding:13px 17px;
+ border-radius:0 7px 7px 0;margin:15px 0;font-size:14.5px}
+.win{border-left:3px solid var(--sage);background:#F1F4EF;padding:13px 17px;
+ border-radius:0 7px 7px 0;margin:15px 0;font-size:14.5px}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14.2px}
+th{text-align:left;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);
+ border-bottom:1.5px solid var(--line);padding:9px 11px 9px 0}
+td{padding:10px 11px 10px 0;border-bottom:1px solid var(--line2);vertical-align:top}
+.dl{display:block;background:var(--ink);color:var(--paper);padding:18px 22px;border-radius:10px;
+ margin:18px 0;text-decoration:none}
+.dl:hover{text-decoration:none;background:#22272F}
+.dl b{display:block;font-family:var(--serif);font-size:20px;margin-bottom:3px;color:var(--paper)}
+.dl span{font-size:13.5px;color:#A8AEB6}
+.hideNonTrap .step > *:not(.trap):not(.shead):not(.meta){display:none}
+.hideNonTrap .nogo{display:none}
+footer{border-top:1px solid var(--line);padding-top:26px;margin-top:56px;font-size:13px;color:var(--ink3)}
+</style></head><body>
+<div class="shell">
+<aside class="side">
+ <div class="brand"><small>Rebuild guide</small>Credit term requests</div>
+ <div class="prog"><div class="progbar"><div class="progfill"></div></div>
+  <div class="progtxt">0 of 7 steps done</div></div>
+ <nav class="nav"><a href="#top">Overview</a><a href="#s1">1 Get the code</a><a href="#s2">2 The rule</a><a href="#s3">3 Data and lists</a><a href="#s4">4 Import</a><a href="#s5">5 Send</a><a href="#s6">6 Decide and follow</a><a href="#s7">7 Check it</a><a href="#traps">Traps</a><a href="#limits">Known limits</a></nav>
+ <label class="tog"><input type="checkbox" id="trapOnly"> Show only the gotchas</label>
+</aside>
+<main class="main">
+<section id="top"><div class="hero"><div class="kick">Rebuild guide &middot; Power Apps and Power Automate</div><h1>Credit term requests</h1>
+<p class="lede">Rebuild a small app where sales asks for a longer credit term, the right person decides in Approvals, and the requester follows it on a phone.</p>
+<div class="facts"><div class="fact"><b>18 of 18</b><span>rule vectors agree in app, flow and oracle</span></div><div class="fact"><b>9</b><span>live flow runs on the sample, each routed as planned</span></div><div class="fact"><b>0</b><span>errors in the cross-tenant solution check</span></div></div>
+</div>
+<p class="plain"><b>The company is fictional and all data is synthetic.</b> Rimbun Niaga, 40 customers. There is no live link: you install it in your own tenant in about 45 minutes.</p>
+<p><a href="https://github.com/BIVenture2025/rimbun-niaga-credit-terms-app"><b>Source on GitHub</b></a> &middot; <a href="https://github.com/BIVenture2025/rimbun-niaga-credit-terms-app/archive/refs/heads/main.zip">Download ZIP</a> &middot; <a href="https://github.com/BIVenture2025/rimbun-niaga-credit-terms-app/blob/main/docs/INSTALL.md">Install notes</a></p>
+<div class="why"><b>What a reader gets.</b> A working pattern for list-backed approvals: SharePoint lists, one canvas app that works on a phone, one flow with Approvals,
+and a routing rule you can test, all generated from code and shipped as one solution.</div>
+</section>
+
+<section id="s1"><div class="step">
+ <div class="shead"><div class="sno">1</div><h3>Get the code and see what is in it</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 10 min</p>
+ 
+<p class="plain">Everything is in one repository: the generators, the generated app and flow, the solution file and the kit the generators use.</p>
+<p><a href="https://github.com/BIVenture2025/rimbun-niaga-credit-terms-app/archive/refs/heads/main.zip"><b>Download the repository (ZIP)</b></a>, or clone it:</p>
+<div class="code"><pre>git clone https://github.com/BIVenture2025/rimbun-niaga-credit-terms-app.git
+cd rimbun-niaga-credit-terms-app
+python3 --version   # 3.10 or later; no other packages needed</pre></div>
+<table><thead><tr><th style="width:24%">Folder</th><th>What is in it</th></tr></thead><tbody>
+<tr><td><code>data/</code></td><td>The seeded sample generator, the list builder and the frozen control totals</td></tr>
+<tr><td><code>rules/</code></td><td>The routing rule as a Python oracle with 18 test vectors</td></tr>
+<tr><td><code>app/</code></td><td>The app generator and the generated Power Apps YAML</td></tr>
+<tr><td><code>flows/</code></td><td>The flow generator and the generated flow definition</td></tr>
+<tr><td><code>kit/</code></td><td>Helpers the generators import: YAML writer, theme, components, Power Fx library, flow kit, list CSV tool, solution validator</td></tr>
+<tr><td><code>solution/</code></td><td>The exported solution you import</td></tr>
+<tr><td><code>docs/</code></td><td>This guide, install notes, brief, design package, build record and the second reviewer's check</td></tr>
+</tbody></table>
+<div class="note">You need a Microsoft 365 work account with SharePoint, Power Apps and Power Automate. A free developer tenant works. The flow uses standard connectors only (SharePoint, Approvals, Office 365 Outlook).</div>
+</div></section>
+<section id="s2"><div class="step">
+ <div class="shead"><div class="sno">2</div><h3>Understand the rule first</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 10 min</p>
+ 
+<p class="plain">A salesperson asks for a longer credit term for one customer. Most requests are small and safe, and the credit controller can
+decide them. Some carry risk and must go to the finance manager. The app decides which, from five tests, and lists every test that fired:</p>
+<ul><li>the new term is more than 30 days over the customer's <b>standard</b> term (not the current one, so splitting a request into small steps does not help);</li>
+<li>exposure with this order goes over the customer's credit limit;</li><li>exposure with this order goes over RM 250,000;</li>
+<li>anything is 60 or more days overdue;</li><li>the customer is grade D or E.</li></ul>
+<p>Terms come from a ladder: COD, 7, 14, 30, 45, 60 and 90 days. The thresholds and the two approvers' addresses live in the <code>RN Settings</code> list.</p>
+<div class="code"><pre>python3 rules/p36_rules.py --selftest     # 18 checked, 0 failures</pre></div><div class="why"><b>Why the rule is written three times.</b> The app shows the sender who will decide before they press Send; the flow decides for real. If the two ever disagreed, the app would promise one thing and do another. A Python oracle with 18 vectors is the referee: the app runs them on a self-test screen, and an independent reviewer checked the flow's expressions against them. All three agree on all 18.</div>
+</div></section>
+<section id="s3"><div class="step">
+ <div class="shead"><div class="sno">3</div><h3>Generate the data and the lists</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 15 min</p>
+ 
+<p class="plain">Open <code>data/gen_sample.py</code> and set <code>OWNER</code> to your own sign-in address: in testing you play the requester and both approvers.
+Then generate the data and one CSV per list.</p>
+<div class="code"><pre>python3 data/gen_sample.py data/out
+python3 data/gen_lists.py kit data/out data/sp</pre></div>
+<p>Compare the <code>control_totals.json</code> the generator writes into your output folder with the committed <code>data/control_totals.json</code>: 40 customers, total exposure RM 4,703,500,
+limits RM 8,150,000, 13 customers with overdue, 6 settings. Create a SharePoint site, upload the three CSVs to its Documents library, and create each list with
+<b>New, List, From CSV</b>. The first line of each CSV declares the column types, so the lists arrive typed and filled.</p>
+<details class="trap"><summary>The upload box is in a frame</summary><div class="body">Scripts cannot reach the file box of the From CSV dialog. Upload the CSVs to the site's Documents library first, then pick them from there.</div></details><details class="trap"><summary>Do not ship the CSVs</summary><div class="body">They are output. The generator is seeded, so it writes the same rows every time; the control totals are the test.</div></details>
+</div></section>
+<section id="s4"><div class="step">
+ <div class="shead"><div class="sno">4</div><h3>Import the solution</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 10 min</p>
+ 
+<p class="plain">The solution holds the app, the flow, three connection references and four environment variables (the site and the three lists).</p>
+<ol><li>Power Apps, Solutions, Import solution, pick <code>solution/RNCreditTerms_1_0_0_0.zip</code>.</li>
+<li>Create or pick a SharePoint, an Approvals and an Office 365 Outlook connection.</li>
+<li>Pick your site and the three lists for the four variables. The file carries no values on purpose.</li>
+<li>Import, then turn on the flow <code>RN Term request approval</code>.</li></ol>
+<p>Set <code>CreditControllerEmail</code> and <code>FinanceManagerEmail</code> in <code>RN Settings</code>. The Finance queue appears only for these two people.</p>
+<details class="tech"><summary>How the solution was checked</summary><div class="body"><p>Exported through the Dataverse <code>ExportSolution</code> action straight to a file, then <code>python3 kit/validate_solution_zip.py solution/RNCreditTerms_1_0_0_0.zip --cross-tenant</code>: 11 files, 1 flow, 1 canvas app, 4 variable definitions, 3 connection references, 0 errors, 0 warnings.</p></div></details><details class="trap"><summary>Environment variable values ride along</summary><div class="body">Power Apps Studio creates the variables for you when you add a SharePoint list, and puts their current values in the solution. Turn <b>Export value</b> off for each one (variable, Advanced) before export, or the import lands on the build site.</div></details>
+</div></section>
+<section id="s5"><div class="step">
+ <div class="shead"><div class="sno">5</div><h3>Use it: send a request</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 5 min</p>
+ 
+<p class="plain">Home shows your open requests, your recent approvals and, for approvers, what is waiting. A new request is three short steps: pick the customer,
+pick the new term with the order value and a reason, then check and send. Step 3 says who will decide and why, before you send.</p>
+<figure><img src="img/rimbun-terms/home_1280.jpg" alt="Home on a desktop: three tiles, the actions, your recent requests and the rule in plain words" loading="lazy"><figcaption>Home on a desktop: three tiles, the actions, your recent requests and the rule in plain words</figcaption></figure><figure><img src="img/rimbun-terms/new_step2_1280.jpg" alt="Step 2: only longer terms on the ladder are offered; the customer&#x27;s facts stay in view" loading="lazy"><figcaption>Step 2: only longer terms on the ladder are offered; the customer's facts stay in view</figcaption></figure><figure><img src="img/rimbun-terms/new_step3_390.png" alt="Step 3 on a phone: who decides and why, from the same rule the flow uses" loading="lazy"><figcaption>Step 3 on a phone: who decides and why, from the same rule the flow uses</figcaption></figure>
+</div></section>
+<section id="s6"><div class="step">
+ <div class="shead"><div class="sno">6</div><h3>Use it: decide and follow</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 5 min</p>
+ 
+<p class="plain">Within about a minute the flow gives the request a number, writes the tier and the reason, and sends an approval. The approver decides in the
+Approvals centre, Teams or Outlook; the details show the term, the standard term and credit limit, the exposure, the overdue amount and grade, and why it came to them.
+The flow writes the decision back, updates the customer's current term with a review date six months on, and emails the requester.</p>
+<figure><img src="img/rimbun-terms/approval_details_T15.png" alt="The approval as the finance manager sees it" loading="lazy"><figcaption>The approval as the finance manager sees it</figcaption></figure><figure><img src="img/rimbun-terms/mine_1280.jpg" alt="My requests: the list and the full trail of one request" loading="lazy"><figcaption>My requests: the list and the full trail of one request</figcaption></figure><figure><img src="img/rimbun-terms/mine_detail_390.png" alt="The same trail on a phone, which is where most requesters follow it" loading="lazy"><figcaption>The same trail on a phone, which is where most requesters follow it</figcaption></figure><figure><img src="img/rimbun-terms/queue_1280.jpg" alt="Finance queue: what is waiting, oldest first, and why each one is there" loading="lazy"><figcaption>Finance queue: what is waiting, oldest first, and why each one is there</figcaption></figure><div class="why"><b>Why decisions are not made in the app.</b> Approvals already gives one record per decision, reminders, and Teams and Outlook buttons. The app shows the queue and links to it, so there is never a second place where a decision could be recorded differently.</div>
+</div></section>
+<section id="s7"><div class="step">
+ <div class="shead"><div class="sno">7</div><h3>Check it</h3>
+ <label class="chk"><input type="checkbox"> done</label></div>
+ <p class="meta">about 10 min</p>
+ 
+<p class="plain">Four checks tell you it works.</p>
+<ol><li>Add <code>?screen=ruletest</code> to the app's play link: 18 of 18.</li>
+<li>Send a request for a customer with clean history and a small step: it goes to the credit controller, "Within credit controller limits".</li>
+<li>Send one 60 days over the standard term: it goes to the finance manager, and the reason names the test.</li>
+<li>Type a row straight into the list with a 120-day term: the flow marks it <b>Needs attention</b> with "Pick a term from the list" and stops.</li></ol>
+<figure><img src="img/rimbun-terms/ruletest_1280.jpg" alt="The self-test screen in the published app" loading="lazy"><figcaption>The self-test screen in the published app</figcaption></figure><figure><img src="img/rimbun-terms/home_800.png" alt="Tablet width: tiles two per row, actions in one line" loading="lazy"><figcaption>Tablet width: tiles two per row, actions in one line</figcaption></figure><figure><img src="img/rimbun-terms/home_390.png" alt="Phone width: one tile per row, full-width buttons, status under each request" loading="lazy"><figcaption>Phone width: one tile per row, full-width buttons, status under each request</figcaption></figure>
+</div></section>
+<h2 id="traps">The traps table</h2>
+<p>What the author hit and a reader would otherwise find out the hard way.</p>
+<table><thead><tr><th style="width:30%">Trap</th><th>What happens</th><th style="width:34%">Fix</th></tr></thead><tbody>
+<tr><td><b>Text control too short for its padding</b></td><td>A 24 px status pill shows tiny scroll arrows in the published app, though not in Studio</td><td>Modern text pads 5 px and has a 32 px minimum inside a container: set height 28, padding 0, minimum 28</td></tr>
+<tr><td><b>Named formula over a list</b></td><td>A request just sent does not appear in My requests until the app reloads</td><td>Put the filter inline where it is used; <code>Refresh</code> did not re-evaluate the named formula</td></tr>
+<tr><td><b>Timer inside a component</b></td><td>The toast never goes away</td><td>A timer on the screen dismisses it; the component keeps its close button</td></tr>
+<tr><td><b>Studio publishes the old version</b></td><td>After YAML is pushed with the authoring tools, Save is greyed and Publish republishes the last saved version</td><td>Make one small change in Studio (and change it back) so Save lights up, save, then publish</td></tr>
+<tr><td><b>Component inside a gallery</b></td><td>Studio refuses it</td><td>Use a plain text control styled as a pill inside gallery rows</td></tr>
+<tr><td><b>Dropdown default</b></td><td>A text default is rejected</td><td>The modern dropdown wants a record: <code>{Value: "Other"}</code></td></tr>
+<tr><td><b>Date-only values</b></td><td>A review date stored at UTC midnight shows the day before in Malaysia</td><td>The flow computes dates in Malaysia time (<code>Singapore Standard Time</code>) before writing</td></tr>
+<tr><td><b>Partial updates in the flow</b></td><td>The standard "update item" action insists on every required column</td><td>Send a REST <code>MERGE</code> with only the changed columns</td></tr>
+</tbody></table>
+
+<h2 id="limits">Known limits</h2>
+<div class="warn"><b>1. Self-approval is not blocked.</b> In the sample one person plays every role. In real use, check that the approver is not the requester.</div>
+<div class="warn"><b>2. Counts are capped at 500 rows</b> per query because counts over SharePoint are not delegated. Fine for the sample; a real book needs a different count.</div>
+<div class="warn"><b>3. No install rehearsal in a second environment.</b> The cross-tenant check passed, but the import itself was not repeated elsewhere.</div>
+<p>Smaller points: desktop captures are 1280 wide; Next on step 2 checks the fields when pressed rather than being greyed out.</p>
+<h2 id="notdo">What this does not do</h2>
+<p>No credit scoring, no ERP link (exposure and overdue are list columns), no delegation of approval, no reminders beyond what Approvals sends. The data is synthetic.</p>
+
+<footer>Built by <b>Yeong Wai Son</b>, Kuala Lumpur &middot; <a href="https://github.com/BIVenture2025/rimbun-niaga-credit-terms-app">Source on GitHub</a> &middot; <a href="https://github.com/BIVenture2025/rimbun-niaga-credit-terms-app/archive/refs/heads/main.zip">Download ZIP</a> &middot; MIT licence. Synthetic data; Rimbun Niaga is fictional.</footer>
+</main></div>
+<script>
+const boxes=[...document.querySelectorAll('.chk input')];
+const fill=document.querySelector('.progfill'),ptxt=document.querySelector('.progtxt');
+function upd(){const n=boxes.filter(b=>b.checked).length;
+ fill.style.width=(n/boxes.length*100)+'%';ptxt.textContent=n+' of '+boxes.length+' steps done';}
+boxes.forEach(b=>b.addEventListener('change',()=>{b.closest('.step').classList.toggle('done',b.checked);upd();}));
+upd();
+document.querySelectorAll('.code').forEach(c=>{const b=document.createElement('button');
+ b.className='cp';b.textContent='Copy';
+ b.onclick=()=>navigator.clipboard.writeText(c.querySelector('pre').innerText).then(()=>{
+  b.textContent='Copied';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1400)});
+ c.appendChild(b);});
+const links=[...document.querySelectorAll('.nav a')];
+const secs=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)
+ links.forEach(l=>l.classList.toggle('on',l.getAttribute('href')==='#'+e.target.id))}),
+ {rootMargin:'-12% 0px -78% 0px'}).observe&&secs.forEach(s=>
+ new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)
+ links.forEach(l=>l.classList.toggle('on',l.getAttribute('href')==='#'+e.target.id))}),
+ {rootMargin:'-12% 0px -78% 0px'}).observe(s));
+document.getElementById('trapOnly').addEventListener('change',e=>
+ document.body.classList.toggle('hideNonTrap',e.target.checked));
+</script></body></html>

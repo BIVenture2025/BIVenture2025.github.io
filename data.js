@@ -785,6 +785,46 @@ const CV = {
       guideTxt: "Rebuild guide \u2197",
       repo: "https://github.com/BIVenture2025/rimbun-niaga-credit-terms-app",
       note: "Synthetic data from a seeded generator; Rimbun Niaga is fictional. Published as an installable solution and source, not a live app: lists, app, flow, the rule oracle and a rebuild guide, with the limits named: self-approval is not blocked, counts are capped at 500 rows, and the install was not rehearsed in a second environment."
+    },
+    {
+      id: "sinar-lembah-grid-forecast",
+      category: "Data Platform",
+      domain: "Grid Operations & Demand Forecasting",
+      no: "24",
+      kind: "report",
+      title: "Grid Demand Forecast and Meter Watch — Sinar Lembah Grid",
+      meta: "Microsoft Fabric · Eventhouse · KQL · Lakehouse · Notebooks · Direct Lake",
+      image: "img/sinar-lembah-grid.jpg",
+      desc: "An electricity distributor's 48 feeders report demand every hour. Each hourly batch lands in an Eventhouse, where KQL update policies score every reading against the feeder's usual load for that hour and day type and raise an alert when it is far off or stuck. Planned load transfers in the switching log explain an alert instead of escalating it. Notebooks build the Gold tables and train a day-ahead forecast that has to beat \"same hour last week\" with a 95% interval above zero, or the benchmark is used instead. A pipeline runs it all with a verdict gate after each step, and a Direct Lake report shows tomorrow hour by hour, with a range, beside the alerts.",
+      use: "Utilities and operations teams that want near-real-time anomaly alerts and a forecast they can check in one Fabric workspace, and anyone who needs a Fabric estate that rebuilds from Git into an empty workspace.",
+      tags: [
+        "Microsoft Fabric",
+        "Eventhouse",
+        "KQL",
+        "Lakehouse",
+        "Fabric ML",
+        "Direct Lake",
+        "Data Pipelines",
+        "Python"
+      ],
+      signals: [
+        {
+          v: "15 / 16",
+          k: "Planted meter faults caught by the detector, with 0 alerts in 8 control windows"
+        },
+        {
+          v: "2.65 pts",
+          k: "Forecast error gain over same hour last week, 95% interval 1.81 to 3.56"
+        },
+        {
+          v: "9 / 9",
+          k: "Items rebuilt from Git into an empty workspace, with the same totals as the original"
+        }
+      ],
+      guide: "https://biventure2025.github.io/sinar-lembah-grid-forecast/docs/guide.html",
+      guideTxt: "Rebuild guide ↗",
+      repo: "https://github.com/BIVenture2025/sinar-lembah-grid-forecast",
+      note: "Synthetic data from a seeded generator; Sinar Lembah Grid is fictional. Published as a Fabric Git-format repository and a rebuild guide, not a live workspace, with the limits named: the forecast range held 72% of hours against an 80% target, the detector missed one weak drop, and there is no live meter feed."
     }
   ],
 

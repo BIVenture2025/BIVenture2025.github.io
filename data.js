@@ -825,6 +825,46 @@ const CV = {
       guideTxt: "Rebuild guide ↗",
       repo: "https://github.com/BIVenture2025/sinar-lembah-grid-forecast",
       note: "Synthetic data from a seeded generator; Sinar Lembah Grid is fictional. Published as a Fabric Git-format repository and a rebuild guide, not a live workspace, with the limits named: the forecast range held 72% of hours against an 80% target, the detector missed one weak drop, and there is no live meter feed."
+    },
+    {
+      id: "teduh-capex-afe-desk",
+      category: "Combined Solution",
+      domain: "Capital Projects & Approvals",
+      no: "25",
+      kind: "report",
+      title: "Capex AFE Desk — Teduh Samudera Energy",
+      meta: "Power Apps · Code apps · Power Automate · Dataverse · Microsoft Fabric · Direct Lake",
+      image: "img/teduh-capex-afe.jpg",
+      desc: "A project engineer raises an AFE (authority for expenditure) in a canvas app, with the estimate by cost element and by year. One flow routes it: the finance controller checks it, then the approver the limits of authority name for its size decides in Approvals. Each night a Copy job lands the AFEs in a Lakehouse, notebooks join them to the ERP's purchase orders and GL actuals and work out committed cost and estimate at completion, and a second Copy job upserts the result back to Dataverse. A React code app shows spend against approval, and when an AFE heads more than 10% over, the engineer raises a supplementary AFE from the flag. A Direct Lake report gives the capex controller the scoreboard, the watchlist and approval times by tier.",
+      use: "Capital project and finance teams in oil and gas or utilities that approve spend by limits of authority, and anyone who needs a working round trip between Power Platform and Fabric.",
+      tags: [
+        "Power Apps",
+        "Code apps",
+        "Power Automate",
+        "Dataverse",
+        "Microsoft Fabric",
+        "Copy job",
+        "Direct Lake",
+        "Python"
+      ],
+      signals: [
+        {
+          v: "57 / 57",
+          k: "AFE families where Gold equals the independent oracle"
+        },
+        {
+          v: "18 / 18",
+          k: "LOA test amounts routed the same in Python, Power Fx and the flow"
+        },
+        {
+          v: "4 → 3",
+          k: "AFEs flagged over 110%, after a supplement ran live through both approvals and one nightly run"
+        }
+      ],
+      guide: "https://biventure2025.github.io/teduh-capex-afe-desk/docs/guide.html",
+      guideTxt: "Rebuild guide ↗",
+      repo: "https://github.com/BIVenture2025/teduh-capex-afe-desk",
+      note: "Synthetic data from a seeded generator; Teduh Samudera Energy is fictional. Published as a repository and a rebuild guide, not a live tenant, with the limits named: AFE numbers are given by the app rather than the flow, the detail page uses a slicer rather than drill-through, and spend is as at the last nightly run."
     }
   ],
 
